@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 110" role="img" aria-label="Construccions i Reformes Albert i Tomàs">
+  <g>
+    <!-- Mur de maons -->
+    <g fill="#8B2C3A">
+      <rect x="6" y="14" width="34" height="14" rx="1"/>
+      <rect x="42" y="14" width="34" height="14" rx="1"/>
+      <rect x="6" y="30" width="22" height="14" rx="1"/>
+      <rect x="30" y="30" width="34" height="14" rx="1"/>
+      <rect x="66" y="30" width="22" height="14" rx="1"/>
+      <rect x="6" y="46" width="34" height="14" rx="1"/>
+      <rect x="42" y="46" width="34" height="14" rx="1"/>
+      <rect x="6" y="62" width="22" height="14" rx="1"/>
+      <rect x="30" y="62" width="34" height="14" rx="1"/>
+    </g>
+    <!-- Paleta gris -->
+    <path d="M 60 8 Q 95 4 100 30 L 92 38 Q 78 22 60 22 Z" fill="#9E9E9E"/>
+    <path d="M 92 38 L 100 50 L 96 56 L 88 44 Z" fill="#4A4A4A"/>
+    <line x1="96" y1="56" x2="104" y2="68" stroke="#2B2B2B" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- Text -->
+  <text x="120" y="48" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#8B2C3A" letter-spacing="0.5">CONSTRUCCIONS I REFORMES</text>
+  <text x="120" y="78" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#2B2B2B" letter-spacing="1.5">ALBERT I TOMÀS</text>
+</svg>
