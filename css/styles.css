@@ -1455,10 +1455,9 @@ a.contact-item:hover {
     .cta-banner h2 { font-size: clamp(1.6rem, 6vw, 2rem); }
     .cta-banner-inner .btn { width: 100%; }
 
-    /* Galeria de projectes oculta en mòbil */
-    #projectes,
-    .nav li:has(a[href="#projectes"]),
-    .footer-col li:has(a[href="#projectes"]) { display: none; }
+    /* Galeria de projectes: només mostrem 4 a mòbil */
+    .gallery .project-card:nth-child(4),
+    .gallery .project-card:nth-child(5) { display: none; }
 
     /* About: layout mòbil simplificat */
     .section-about { padding: 70px 0 90px; }
