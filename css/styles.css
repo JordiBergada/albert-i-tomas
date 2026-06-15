@@ -1388,7 +1388,7 @@ a.contact-item:hover {
         grid-template-columns: 1fr;
         gap: 56px;
     }
-    .about-images { max-width: 460px; margin: 0 auto; }
+    .about-images { max-width: 460px; margin: 0 auto; width: 100%; }
     .contact-grid { grid-template-columns: 1fr; gap: 32px; }
 }
 
@@ -1445,8 +1445,45 @@ a.contact-item:hover {
     }
     .project-card.project-large { aspect-ratio: 16 / 11; }
 
-    .cta-banner-inner { text-align: left; }
+    .cta-banner-inner {
+        text-align: left;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 28px;
+    }
     .cta-banner { padding: 70px 0; }
+    .cta-banner h2 { font-size: clamp(1.6rem, 6vw, 2rem); }
+    .cta-banner-inner .btn { width: 100%; }
+
+    /* Galeria de projectes oculta en mòbil */
+    #projectes,
+    .nav li:has(a[href="#projectes"]),
+    .footer-col li:has(a[href="#projectes"]) { display: none; }
+
+    /* About: layout mòbil simplificat */
+    .section-about { padding: 70px 0 90px; }
+    .about { gap: 40px; }
+    .about-images {
+        max-width: 100%;
+        aspect-ratio: 4 / 3.2;
+    }
+    .about-image-main {
+        width: 80%;
+        height: 80%;
+    }
+    .about-image-secondary {
+        width: 50%;
+        height: 50%;
+        border-width: 6px;
+    }
+    .about-badge {
+        left: 0;
+        bottom: 8%;
+        padding: 18px 20px;
+        max-width: 160px;
+    }
+    .about-badge .badge-num { font-size: 1.9rem; }
+    .about-badge small { font-size: 0.68rem; }
 
     .reel-card { flex: 0 0 200px; }
 
