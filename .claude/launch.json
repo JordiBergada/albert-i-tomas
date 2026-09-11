@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "static-http",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "8765", "/Users/wwwarcelona/Documents/albert_i_tomas"],
+      "port": 8765
+    }
+  ]
+}
