@@ -256,6 +256,27 @@ em { font-style: normal; color: var(--terracota); }
 
 .btn-full { width: 100%; }
 
+.btn-outline {
+    background: transparent;
+    color: var(--terracota);
+    border-color: var(--terracota);
+}
+
+.btn-outline:hover {
+    background: var(--terracota);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(194, 91, 63, 0.28);
+}
+
+.gallery-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+}
+
+
+
 /* ===========================
    Navbar
    =========================== */
@@ -373,7 +394,7 @@ em { font-style: normal; color: var(--terracota); }
 .hero-bg {
     position: absolute;
     inset: 0;
-    background-image: url('https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=2400&q=80');
+    background-image: url('https://images.unsplash.com/photo-1617720356637-6264c1c0b4bb?auto=format&fit=crop&w=2400&q=80');
     background-size: cover;
     background-position: center;
     transform: scale(1.06);
@@ -634,7 +655,7 @@ em { font-style: normal; color: var(--terracota); }
 .cta-banner {
     background:
         linear-gradient(135deg, rgba(43, 31, 24, 0.85) 0%, rgba(158, 69, 48, 0.75) 100%),
-        url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1800&q=70') center/cover;
+        url('https://images.unsplash.com/photo-1542621334-a254cf47733d?auto=format&fit=crop&w=1800&q=70') center/cover;
     color: var(--white);
     padding: 90px 0;
     position: relative;
@@ -686,7 +707,7 @@ em { font-style: normal; color: var(--terracota); }
     top: 0; left: 0;
     width: 75%;
     height: 78%;
-    background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1000&q=80');
+    background-image: url('https://images.unsplash.com/photo-1516216628859-9bccecab13ca?auto=format&fit=crop&w=1000&q=80');
 }
 
 .about-image-secondary {
@@ -694,7 +715,7 @@ em { font-style: normal; color: var(--terracota); }
     bottom: 0; right: 0;
     width: 55%;
     height: 55%;
-    background-image: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&q=80');
+    background-image: url('https://images.unsplash.com/photo-1558227691-41ea78d1f631?auto=format&fit=crop&w=800&q=80');
     border: 8px solid var(--sand-lighter);
 }
 
@@ -1615,6 +1636,236 @@ a.contact-item:hover {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
+}
+
+
+/* ===========================
+   Page hero (pàgines internes)
+   =========================== */
+.page-hero {
+    background: var(--sand-lighter);
+    padding: 190px 0 80px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.page-hero-content {
+    max-width: 760px;
+}
+
+.page-hero h1 {
+    font-size: clamp(2.2rem, 4.6vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+}
+
+.page-hero-subtitle {
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 620px;
+}
+
+/* ===========================
+   Filtre de projectes
+   =========================== */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 48px;
+}
+
+.filter-btn {
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.filter-btn:hover {
+    border-color: var(--terracota);
+    color: var(--terracota);
+}
+
+.filter-btn.is-active {
+    background: var(--terracota);
+    border-color: var(--terracota);
+    color: var(--white);
+}
+
+.filter-empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 0;
+    font-size: 1rem;
+}
+
+/* ===========================
+   Graella de projectes (llistat)
+   =========================== */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+.project-item {
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.project-item.is-hidden { display: none; }
+
+.project-item:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+}
+
+.project-item-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--sand);
+    transition: transform 0.6s ease;
+}
+
+.project-item:hover .project-item-image { transform: scale(1.05); }
+
+.project-item-body {
+    padding: 26px 26px 30px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.project-tag-light {
+    display: inline-block;
+    align-self: flex-start;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--terracota);
+    background: var(--terracota-soft);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+}
+
+.project-item h3 {
+    font-size: 1.18rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.005em;
+}
+
+.project-item p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+
+/* ===========================
+   Banda d'estadístiques
+   =========================== */
+.section-stats-band {
+    background: var(--cream-warm);
+    padding: 90px 0;
+}
+
+.stats-band {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.stat-block {
+    text-align: center;
+    padding: 36px 20px;
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+}
+
+.stat-block-num {
+    display: block;
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 12px;
+}
+
+.stat-block-num i {
+    font-style: normal;
+    color: var(--terracota);
+    font-size: 0.7em;
+    font-weight: 600;
+}
+
+.stat-block-label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* Select del formulari */
+.form-row select {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--cream-warm);
+    color: var(--ink);
+    transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A7766' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+    padding-right: 42px;
+}
+
+.form-row select:focus {
+    outline: none;
+    background-color: var(--white);
+    border-color: var(--terracota);
+    box-shadow: 0 0 0 4px rgba(194, 91, 63, 0.12);
+}
+
+@media (max-width: 1024px) {
+    .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-band { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .page-hero { padding: 140px 0 60px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .stats-band { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .stat-block { padding: 28px 16px; }
+    .filter-bar { gap: 8px; margin-bottom: 36px; }
+    .filter-btn { padding: 10px 18px; font-size: 0.82rem; }
+    .section-stats-band { padding: 70px 0; }
 }
 
 /* ===========================

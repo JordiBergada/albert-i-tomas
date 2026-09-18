@@ -111,6 +111,38 @@
         });
     }
 
+
+    // Filtre de projectes (pàgina Casos d'èxit)
+    const filterBar = document.getElementById('filterBar');
+    const projectsGrid = document.getElementById('projectsGrid');
+    const filterEmpty = document.getElementById('filterEmpty');
+
+    if (filterBar && projectsGrid) {
+        const items = Array.from(projectsGrid.querySelectorAll('.project-item'));
+
+        filterBar.addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
+
+            const filter = btn.dataset.filter;
+
+            filterBar.querySelectorAll('.filter-btn').forEach(b => {
+                const active = b === btn;
+                b.classList.toggle('is-active', active);
+                b.setAttribute('aria-selected', String(active));
+            });
+
+            let visible = 0;
+            items.forEach(item => {
+                const match = filter === 'all' || item.dataset.category === filter;
+                item.classList.toggle('is-hidden', !match);
+                if (match) visible++;
+            });
+
+            if (filterEmpty) filterEmpty.hidden = visible > 0;
+        });
+    }
+
     // Formulari de contacte
     const form = document.getElementById('contactForm');
     const feedback = document.getElementById('formFeedback');
