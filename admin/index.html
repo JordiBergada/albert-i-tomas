@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Panell de projectes · Albert i Tomàs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- ============ Accés ============ -->
+    <main class="auth" id="viewLogin" hidden>
+        <div class="auth-card">
+            <img src="../images/logo.svg" alt="Construccions i Reformes Albert i Tomàs" class="auth-logo">
+            <h1>Panell de projectes</h1>
+            <p class="auth-sub">Entra per publicar i editar els projectes de la web.</p>
+
+            <form id="loginForm" novalidate>
+                <label class="field">
+                    <span>Correu electrònic</span>
+                    <input type="email" name="email" autocomplete="username" required>
+                </label>
+                <label class="field">
+                    <span>Contrasenya</span>
+                    <input type="password" name="password" autocomplete="current-password" required>
+                </label>
+                <p class="form-error" id="loginError" role="alert" hidden></p>
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            </form>
+            <button type="button" class="link-btn" id="forgotBtn">He oblidat la contrasenya</button>
+        </div>
+    </main>
+
+    <!-- ============ Nova contrasenya (des del correu de recuperació) ============ -->
+    <main class="auth" id="viewReset" hidden>
+        <div class="auth-card">
+            <img src="../images/logo.svg" alt="Construccions i Reformes Albert i Tomàs" class="auth-logo">
+            <h1>Nova contrasenya</h1>
+            <p class="auth-sub">Tria una contrasenya d'almenys 8 caràcters.</p>
+            <form id="resetForm" novalidate>
+                <label class="field">
+                    <span>Nova contrasenya</span>
+                    <input type="password" name="password" autocomplete="new-password" minlength="8" required>
+                </label>
+                <p class="form-error" id="resetError" role="alert" hidden></p>
+                <button type="submit" class="btn btn-primary btn-block">Desar contrasenya</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- ============ Aplicació ============ -->
+    <div class="app" id="viewApp" hidden>
+        <header class="topbar">
+            <a href="../index.html" class="topbar-brand" target="_blank" rel="noopener" title="Obrir la web">
+                <img src="../images/logo.svg" alt="Albert i Tomàs">
+            </a>
+            <div class="topbar-right">
+                <a href="../casos-exit.html" target="_blank" rel="noopener" class="topbar-link">Veure la web ↗</a>
+                <span class="topbar-user" id="userEmail"></span>
+                <button type="button" class="btn btn-ghost btn-sm" id="logoutBtn">Sortir</button>
+            </div>
+        </header>
+
+        <!-- Llistat -->
+        <section class="panel" id="viewList">
+            <div class="panel-head">
+                <div>
+                    <h1>Projectes</h1>
+                    <p class="panel-sub" id="listCount">Carregant…</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="newBtn">+ Nou projecte</button>
+            </div>
+
+            <div class="chips" id="listFilter">
+                <button type="button" class="chip is-active" data-cat="">Tots</button>
+                <button type="button" class="chip" data-cat="obra-nova">Obra nova</button>
+                <button type="button" class="chip" data-cat="reformes">Reformes integrals</button>
+                <button type="button" class="chip" data-cat="piscines">Piscines</button>
+                <button type="button" class="chip" data-cat="pedra">Treballs amb pedra</button>
+            </div>
+
+            <ul class="rows" id="rows" aria-live="polite"></ul>
+
+            <div class="empty" id="emptyState" hidden>
+                <h2>Encara no hi ha cap projecte</h2>
+                <p>Crea el primer i apareixerà automàticament a la web.</p>
+                <button type="button" class="btn btn-primary" data-action="new">+ Crear el primer projecte</button>
+            </div>
+        </section>
+
+        <!-- Editor -->
+        <section class="panel" id="viewEditor" hidden>
+            <button type="button" class="back-link" id="backBtn">← Tornar als projectes</button>
+            <div class="panel-head">
+                <h1 id="editorTitle">Nou projecte</h1>
+            </div>
+
+            <form id="projectForm" class="editor" novalidate>
+                <div class="editor-main">
+                    <div class="card">
+                        <label class="field">
+                            <span>Títol <em>*</em></span>
+                            <input type="text" name="titol" maxlength="120" required placeholder="Reforma integral d'un pis a Tàrrega">
+                            <small class="field-error" data-for="titol"></small>
+                        </label>
+
+                        <fieldset class="field">
+                            <legend>Categoria <em>*</em></legend>
+                            <div class="segmented" id="catSegmented">
+                                <label><input type="radio" name="categoria" value="obra-nova"><span>Obra nova</span></label>
+                                <label><input type="radio" name="categoria" value="reformes"><span>Reformes integrals</span></label>
+                                <label><input type="radio" name="categoria" value="piscines"><span>Piscines</span></label>
+                                <label><input type="radio" name="categoria" value="pedra"><span>Treballs amb pedra</span></label>
+                            </div>
+                            <small class="field-error" data-for="categoria"></small>
+                        </fieldset>
+
+                        <label class="field">
+                            <span>Resum curt <small class="counter" data-counter="resum">0 / 220</small></span>
+                            <textarea name="resum" rows="2" maxlength="220" placeholder="Una frase que es veurà a la targeta del projecte."></textarea>
+                        </label>
+
+                        <label class="field">
+                            <span>Descripció</span>
+                            <textarea name="descripcio" rows="7" maxlength="5000" placeholder="Explica què s'ha fet, materials, durada…"></textarea>
+                            <small class="hint">Deixa una línia en blanc per començar un paràgraf nou.</small>
+                        </label>
+
+                        <div class="field-row">
+                            <label class="field">
+                                <span>Ubicació</span>
+                                <input type="text" name="ubicacio" maxlength="80" placeholder="Tàrrega">
+                            </label>
+                            <label class="field">
+                                <span>Any</span>
+                                <input type="number" name="any_projecte" min="1990" max="2100" inputmode="numeric" placeholder="2025">
+                                <small class="field-error" data-for="any_projecte"></small>
+                            </label>
+                        </div>
+
+                        <label class="field">
+                            <span>Vídeo (opcional)</span>
+                            <input type="url" name="video_url" placeholder="https://www.youtube.com/watch?v=…">
+                            <small class="hint">Enllaç de YouTube o Vimeo.</small>
+                            <small class="field-error" data-for="video_url"></small>
+                        </label>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Portada <em>*</em></h2>
+                        <p class="card-sub">És la foto principal: surt a la targeta i a dalt de tot de la fitxa.</p>
+                        <div class="cover" id="coverBox">
+                            <label class="drop drop-cover" id="coverDrop">
+                                <input type="file" accept="image/*" id="coverInput" hidden>
+                                <span class="drop-icon" aria-hidden="true">＋</span>
+                                <span class="drop-text"><strong>Tria una foto</strong> o arrossega-la aquí</span>
+                            </label>
+                        </div>
+                        <small class="field-error" data-for="portada"></small>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Galeria</h2>
+                        <p class="card-sub">Pots afegir-ne tantes com vulguis. Arrossega-les per canviar-ne l'ordre.</p>
+                        <div class="gallery-grid" id="galleryGrid"></div>
+                        <label class="drop" id="galleryDrop">
+                            <input type="file" accept="image/*" multiple id="galleryInput" hidden>
+                            <span class="drop-icon" aria-hidden="true">＋</span>
+                            <span class="drop-text"><strong>Afegeix fotos</strong> o arrossega-les aquí</span>
+                        </label>
+                    </div>
+                </div>
+
+                <aside class="editor-side">
+                    <div class="card sticky">
+                        <h2 class="card-title">Publicació</h2>
+                        <label class="switch">
+                            <input type="checkbox" name="publicat" checked>
+                            <span class="switch-track" aria-hidden="true"></span>
+                            <span class="switch-label">Visible a la web</span>
+                        </label>
+                        <p class="card-sub" id="publishHint">Si el desactives, es desa com a esborrany i no surt a la web.</p>
+                        <p class="form-error" id="saveError" role="alert" hidden></p>
+                        <button type="submit" class="btn btn-primary btn-block" id="saveBtn">Publicar projecte</button>
+                        <a class="btn btn-ghost btn-block" id="viewLink" target="_blank" rel="noopener" hidden>Veure a la web ↗</a>
+                        <button type="button" class="btn btn-danger-ghost btn-block" id="deleteBtn" hidden>Esborrar projecte</button>
+                    </div>
+                </aside>
+            </form>
+        </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/dist/umd/supabase.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/projectes-api.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

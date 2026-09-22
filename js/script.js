@@ -122,31 +122,42 @@
     const projectsGrid = document.getElementById('projectsGrid');
     const filterEmpty = document.getElementById('filterEmpty');
 
-    if (filterBar && projectsGrid) {
-        const items = Array.from(projectsGrid.querySelectorAll('.project-item'));
+    function aplicarFiltre(filter) {
+        if (!filterBar || !projectsGrid) return;
+        const valid = filterBar.querySelector(`.filter-btn[data-filter="${filter}"]`);
+        if (!valid) filter = 'all';
 
+        filterBar.querySelectorAll('.filter-btn').forEach(b => {
+            const active = b.dataset.filter === filter;
+            b.classList.toggle('is-active', active);
+            b.setAttribute('aria-selected', String(active));
+        });
+
+        let visible = 0;
+        projectsGrid.querySelectorAll('.project-item').forEach(item => {
+            const match = filter === 'all' || item.dataset.category === filter;
+            item.classList.toggle('is-hidden', !match);
+            if (match) visible++;
+        });
+
+        if (filterEmpty) filterEmpty.hidden = visible > 0;
+    }
+
+    if (filterBar && projectsGrid) {
         filterBar.addEventListener('click', (e) => {
             const btn = e.target.closest('.filter-btn');
             if (!btn) return;
-
-            const filter = btn.dataset.filter;
-
-            filterBar.querySelectorAll('.filter-btn').forEach(b => {
-                const active = b === btn;
-                b.classList.toggle('is-active', active);
-                b.setAttribute('aria-selected', String(active));
-            });
-
-            let visible = 0;
-            items.forEach(item => {
-                const match = filter === 'all' || item.dataset.category === filter;
-                item.classList.toggle('is-hidden', !match);
-                if (match) visible++;
-            });
-
-            if (filterEmpty) filterEmpty.hidden = visible > 0;
+            aplicarFiltre(btn.dataset.filter);
+            const url = new URL(location.href);
+            if (btn.dataset.filter === 'all') url.searchParams.delete('cat');
+            else url.searchParams.set('cat', btn.dataset.filter);
+            history.replaceState(null, '', url);
         });
+        aplicarFiltre(new URLSearchParams(location.search).get('cat') || 'all');
     }
+
+    window.aplicarFiltreProjectes = () =>
+        aplicarFiltre(new URLSearchParams(location.search).get('cat') || 'all');
 
     // Formulari de contacte
     const form = document.getElementById('contactForm');

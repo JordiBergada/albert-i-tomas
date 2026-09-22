@@ -1,0 +1,43 @@
+name: Desplegament a Hostinger
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/keepalive-stamp'
+      - 'supabase/**'
+      - '**.md'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+    steps:
+      - name: Avís si falten les credencials
+        if: env.FTP_SERVER == ''
+        run: echo "::warning::Falten els secrets FTP_* al repositori. No es desplega res."
+
+      - uses: actions/checkout@v4
+        if: env.FTP_SERVER != ''
+
+      - name: Pujar per FTP (només els fitxers canviats)
+        if: env.FTP_SERVER != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            .claude/**
+            supabase/**
+            **/*.md

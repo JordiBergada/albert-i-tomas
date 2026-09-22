@@ -1,0 +1,45 @@
+name: Supabase keepalive
+
+# Supabase (pla gratuït) pausa el projecte després de 7 dies sense activitat.
+# Aquesta tasca fa una consulta cada 3 dies.
+on:
+  schedule:
+    - cron: '17 7 */3 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Consulta a Supabase
+        run: |
+          URL=$(sed -n "s/.*SUPABASE_URL: *'\([^']*\)'.*/\1/p" js/config.js)
+          KEY=$(sed -n "s/.*SUPABASE_ANON_KEY: *'\([^']*\)'.*/\1/p" js/config.js)
+          if [ -z "$URL" ] || echo "$URL" | grep -q PENDENT; then
+            echo "::warning::Supabase encara no està configurat a js/config.js"; exit 0
+          fi
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$URL/rest/v1/projectes?select=id&limit=1" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+          echo "Resposta de Supabase: HTTP $CODE"
+          test "$CODE" = "200"
+
+      # GitHub desactiva els crons si el repositori passa 60 dies sense activitat.
+      - name: Mantenir el cron actiu
+        run: |
+          LAST=$(git log -1 --format=%ct)
+          DAYS=$(( ($(date +%s) - LAST) / 86400 ))
+          echo "Dies des de l'últim commit: $DAYS"
+          if [ "$DAYS" -ge 45 ]; then
+            date -u > .github/keepalive-stamp
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/keepalive-stamp
+            git commit -m "Keepalive automàtic"
+            git push
+          fi
