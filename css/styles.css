@@ -312,12 +312,12 @@ em { font-style: normal; color: var(--terracota); }
 }
 
 .logo {
-    height: 58px;
+    height: 68px;
     width: auto;
     transition: height var(--transition);
 }
 
-.navbar.scrolled .logo { height: 48px; }
+.navbar.scrolled .logo { height: 54px; }
 
 .nav ul {
     list-style: none;
@@ -2530,8 +2530,8 @@ a.project-item { color: inherit; }
     .navbar-inner { height: 70px; }
     .navbar.scrolled .navbar-inner { height: 64px; }
     .nav { top: 70px; }
-    .logo { height: 46px; }
-    .navbar.scrolled .logo { height: 42px; }
+    .logo { height: 50px; }
+    .navbar.scrolled .logo { height: 46px; }
 
     .hero { padding: 120px 0 60px; }
     .btn { padding: 15px 26px; font-size: 0.92rem; }

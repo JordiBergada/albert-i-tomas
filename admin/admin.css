@@ -106,7 +106,7 @@ a { color: inherit; }
     border-radius: 18px; padding: 44px 38px; text-align: center; box-shadow: 0 22px 52px rgba(43, 31, 24, 0.08);
 }
 .auth-card form { text-align: left; margin-top: 28px; }
-.auth-logo { height: 60px; margin: 0 auto 22px; display: block; }
+.auth-logo { height: 60px; width: auto; max-width: 100%; margin: 0 auto 22px; display: block; }
 .auth-sub { color: var(--muted); margin-top: 8px; }
 
 /* ---------- App ---------- */
@@ -115,7 +115,7 @@ a { color: inherit; }
     padding: 12px 28px; background: rgba(250, 246, 239, 0.92); backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-soft);
 }
-.topbar-brand img { height: 42px; display: block; }
+.topbar-brand img { height: 42px; width: auto; display: block; }
 .topbar-right { display: flex; align-items: center; gap: 18px; }
 .topbar-link { font-weight: 600; font-size: 0.88rem; text-decoration: none; color: var(--terracota); }
 .topbar-user { color: var(--muted); font-size: 0.85rem; }
