@@ -25,7 +25,7 @@ jobs:
           fi
           CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             "$URL/rest/v1/projectes?select=id&limit=1" \
-            -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+            -H "apikey: $KEY")
           echo "Resposta de Supabase: HTTP $CODE"
           test "$CODE" = "200"
 
