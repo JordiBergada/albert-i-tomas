@@ -66,7 +66,12 @@
             '.contact-form',
             '.cta-banner-inner > *',
             '.hero-content > *',
-            '.stat'
+            '.stat',
+            '.team-card',
+            '.value-card',
+            '.story-text',
+            '.story-image',
+            '.stat-block'
         ];
 
         const elements = document.querySelectorAll(revealSelectors.join(','));

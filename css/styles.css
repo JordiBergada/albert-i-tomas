@@ -1868,6 +1868,186 @@ a.contact-item:hover {
     .section-stats-band { padding: 70px 0; }
 }
 
+
+/* ===========================
+   Nosaltres: història, equip i valors
+   =========================== */
+.section-story { background: var(--cream-warm); }
+
+.story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+}
+
+.story-image {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    background-size: cover;
+    background-position: center;
+    background-color: var(--sand);
+    box-shadow: var(--shadow-md);
+}
+
+.story-text h2 { margin-bottom: 24px; }
+
+.story-text .lead {
+    color: var(--muted);
+    margin-bottom: 18px;
+}
+
+.story-sign {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-soft);
+}
+
+.story-sign-num {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--terracota);
+}
+
+.story-sign-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    max-width: 160px;
+    line-height: 1.5;
+}
+
+.section-team { background: var(--sand-lighter); }
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+.team-card {
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.team-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+}
+
+.team-photo {
+    aspect-ratio: 4 / 5;
+    background-size: cover;
+    background-position: center top;
+    background-color: var(--sand);
+    filter: saturate(0.92);
+    transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.team-card:hover .team-photo {
+    transform: scale(1.04);
+    filter: saturate(1);
+}
+
+.team-body {
+    padding: 26px 28px 30px;
+    position: relative;
+    background: var(--white);
+}
+
+.team-role {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--terracota);
+    margin-bottom: 10px;
+}
+
+.team-body h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+}
+
+.team-body p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+
+.section-values { background: var(--cream-warm); padding-bottom: 28px; }
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.value-card {
+    padding: 34px 28px 32px;
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.value-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+}
+
+.value-num {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--terracota);
+    margin-bottom: 18px;
+}
+
+.value-card h3 {
+    font-size: 1.08rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.value-card p {
+    color: var(--muted);
+    font-size: 0.93rem;
+    line-height: 1.6;
+}
+
+.section-values + .section-stats-band { padding-top: 0; }
+
+@media (max-width: 1024px) {
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+    .values-grid { grid-template-columns: repeat(2, 1fr); }
+    .story-grid { gap: 48px; }
+}
+
+@media (max-width: 768px) {
+    .story-grid { grid-template-columns: 1fr; gap: 40px; }
+    .story-image { aspect-ratio: 4 / 3; }
+    .team-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+    .values-grid { grid-template-columns: 1fr; }
+}
+
 /* ===========================
    Animacions reveal
    =========================== */
