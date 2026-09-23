@@ -26,7 +26,18 @@
             <nav class="nav" id="nav">
                 <ul>
                     <li><a href="../index.html">Inici</a></li>
-                    <li><a href="../index.html#serveis">Serveis</a></li>
+                    <li class="nav-has-sub">
+                        <button type="button" class="nav-sub-toggle" aria-expanded="false" aria-controls="navSubServeis">
+                            Serveis
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-sub" id="navSubServeis">
+                            <li><a href="../serveis/obra-nova.html">Obra nova</a></li>
+                            <li><a href="../serveis/reformes-integrals.html">Reformes integrals</a></li>
+                            <li><a href="../serveis/piscines.html">Piscines</a></li>
+                            <li><a href="../serveis/treballs-amb-pedra.html">Treballs amb pedra</a></li>
+                        </ul>
+                    </li>
                     <li><a href="../casos-exit.html">Casos d'èxit</a></li>
                     <li><a href="../nosaltres.html">Nosaltres</a></li>
                     <li><a href="../contacte.html" class="nav-cta">Demana pressupost</a></li>
@@ -55,7 +66,7 @@
                     Demanar pressupost
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </a>
-                <a href="#galeria" class="btn btn-ghost">Veure projectes</a>
+                <a href="../casos-exit.html?cat=reformes" class="btn btn-ghost">Veure projectes</a>
             </div>
         </div>
     </section>
@@ -110,42 +121,60 @@
         </div>
     </section>
 
-    <section class="section service-gallery" id="galeria">
+    <section class="section section-projects-carousel" id="galeria" data-projectes-cat="reformes" hidden>
         <div class="container">
-            <header class="section-header">
-                <span class="eyebrow">Casos d'èxit</span>
-                <h2 class="display">Reformes que hem transformat.</h2>
-                <p class="section-intro">Alguns dels espais que hem reinventat aquests darrers anys.</p>
-            </header>
-            <div class="service-gallery-grid">
-                <div class="service-gallery-item gi-1" style="background-image: url('https://images.unsplash.com/photo-1609347744403-2306e8a9ae27?auto=format&fit=crop&w=1400&q=80');"></div>
-                <div class="service-gallery-item gi-2" style="background-image: url('https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80');"></div>
-                <div class="service-gallery-item gi-3" style="background-image: url('https://images.unsplash.com/photo-1595814432314-90095f342694?auto=format&fit=crop&w=1000&q=80');"></div>
-                <div class="service-gallery-item gi-4" style="background-image: url('https://images.unsplash.com/photo-1665507279638-5b48073c637b?auto=format&fit=crop&w=900&q=80');"></div>
-                <div class="service-gallery-item gi-5" style="background-image: url('https://images.unsplash.com/photo-1576698483491-8c43f0862543?auto=format&fit=crop&w=1200&q=80');"></div>
-                <div class="service-gallery-item gi-6" style="background-image: url('https://images.unsplash.com/photo-1595814433015-e6f5ce69614e?auto=format&fit=crop&w=1600&q=80');"></div>
-            </div>
-
-            <div class="gallery-cta">
-                <a href="../casos-exit.html?cat=reformes" class="btn btn-light">
-                    Veure tots els projectes
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <header class="section-header section-header-row">
+                <div>
+                    <span class="eyebrow">Casos d'èxit</span>
+                    <h2 class="display">Reformes que hem transformat.</h2>
+                </div>
+                <a href="../casos-exit.html?cat=reformes" class="link-arrow">
+                    Veure'ls tots
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </a>
-            </div>
+            </header>
+            <div class="projects-track"></div>
         </div>
     </section>
 
-    <section class="section section-testimonials">
+    <section class="section section-testimonials" id="testimonis">
         <div class="container">
-            <div class="testimonials-grid" style="grid-template-columns: 1fr; max-width: 720px; margin: 0 auto;">
+            <header class="section-header">
+                <span class="eyebrow">Testimonis</span>
+                <h2 class="display">El que diuen els nostres clients.</h2>
+            </header>
+
+            <div class="testimonials-grid">
                 <figure class="testimonial-card">
                     <div class="stars" aria-label="5 estrelles">★★★★★</div>
                     <blockquote>
-                        Vam reformar el pis sencer amb ells i no podem estar més contents. Seriosos, nets i molt atents als detalls.
+                        Ens van reformar el bany i la cuina i no podem estar més contents. Seriosos, nets i molt atents als detalls.
                     </blockquote>
                     <figcaption>
                         <strong>Marta i Jordi</strong>
-                        <span>Reforma integral · Tàrrega</span>
+                        <span>Reforma de bany i cuina · Tàrrega</span>
+                    </figcaption>
+                </figure>
+
+                <figure class="testimonial-card">
+                    <div class="stars" aria-label="5 estrelles">★★★★★</div>
+                    <blockquote>
+                        L'Albert i el seu equip ens van fer la terrassa i el jardí. Compliment de terminis, pressupost respectat i un acabat excel·lent.
+                    </blockquote>
+                    <figcaption>
+                        <strong>Família Solé</strong>
+                        <span>Terrassa i jardí · Verdú</span>
+                    </figcaption>
+                </figure>
+
+                <figure class="testimonial-card">
+                    <div class="stars" aria-label="5 estrelles">★★★★★</div>
+                    <blockquote>
+                        Vam fer la reforma d'una caseta de poble i ens l'han deixat com nova. Molt recomanables.
+                    </blockquote>
+                    <figcaption>
+                        <strong>Anna P.</strong>
+                        <span>Reforma de casa petita · Cervera</span>
                     </figcaption>
                 </figure>
             </div>
@@ -281,6 +310,10 @@
         </span>
     </a>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/dist/umd/supabase.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/projectes-api.js"></script>
     <script src="../js/script.js"></script>
+    <script src="../js/projectes-public.js"></script>
 </body>
 </html>

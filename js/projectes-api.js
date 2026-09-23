@@ -86,9 +86,21 @@
         return data;
     }
 
+    async function llistarDestacats({ nomesPublicats = true } = {}) {
+        let q = client
+            .from('destacats')
+            .select('*')
+            .order('ordre', { ascending: true })
+            .order('created_at', { ascending: false });
+        if (nomesPublicats) q = q.eq('publicat', true);
+        const { data, error } = await q;
+        if (error) throw error;
+        return data;
+    }
+
     window.ProjectesAPI = {
         CATEGORIES, configured, client, BUCKET,
         imageUrl, escapeHtml, slugify, videoEmbedUrl,
-        llistarPublicats, obtenirPerSlug
+        llistarPublicats, obtenirPerSlug, llistarDestacats
     };
 })();

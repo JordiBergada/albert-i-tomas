@@ -26,7 +26,18 @@
             <nav class="nav" id="nav">
                 <ul>
                     <li><a href="index.html">Inici</a></li>
-                    <li><a href="index.html#serveis">Serveis</a></li>
+                    <li class="nav-has-sub">
+                        <button type="button" class="nav-sub-toggle" aria-expanded="false" aria-controls="navSubServeis">
+                            Serveis
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-sub" id="navSubServeis">
+                            <li><a href="serveis/obra-nova.html">Obra nova</a></li>
+                            <li><a href="serveis/reformes-integrals.html">Reformes integrals</a></li>
+                            <li><a href="serveis/piscines.html">Piscines</a></li>
+                            <li><a href="serveis/treballs-amb-pedra.html">Treballs amb pedra</a></li>
+                        </ul>
+                    </li>
                     <li><a href="casos-exit.html">Casos d'èxit</a></li>
                     <li><a href="nosaltres.html">Nosaltres</a></li>
                     <li><a href="contacte.html" class="nav-cta">Demana pressupost</a></li>

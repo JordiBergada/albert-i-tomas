@@ -68,6 +68,11 @@
             </div>
         </header>
 
+        <nav class="tabs" id="sectionTabs" aria-label="Seccions">
+            <button type="button" class="tab is-active" data-section="projectes">Projectes</button>
+            <button type="button" class="tab" data-section="destacats">A obra</button>
+        </nav>
+
         <!-- Llistat -->
         <section class="panel" id="viewList">
             <div class="panel-head">
@@ -191,6 +196,84 @@
                         <button type="submit" class="btn btn-primary btn-block" id="saveBtn">Publicar projecte</button>
                         <a class="btn btn-ghost btn-block" id="viewLink" target="_blank" rel="noopener" hidden>Veure a la web ↗</a>
                         <button type="button" class="btn btn-danger-ghost btn-block" id="deleteBtn" hidden>Esborrar projecte</button>
+                    </div>
+                </aside>
+            </form>
+        </section>
+
+        <!-- A obra: llistat -->
+        <section class="panel" id="viewDestacats" hidden>
+            <div class="panel-head">
+                <div>
+                    <h1>A obra</h1>
+                    <p class="panel-sub" id="dCount">Carregant…</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="dNewBtn">+ Nou destacat</button>
+            </div>
+            <p class="panel-note">Fotos verticals o vídeos que es veuen al carrusel de la pàgina d'inici. Si no n'hi ha cap, la secció no apareix a la web.</p>
+
+            <ul class="rows" id="dRows" aria-live="polite"></ul>
+
+            <div class="empty" id="dEmpty" hidden>
+                <h2>Encara no hi ha res</h2>
+                <p>Afegeix una foto vertical o un vídeo del dia a dia a l'obra.</p>
+                <button type="button" class="btn btn-primary" data-action="dnew">+ Afegir el primer</button>
+            </div>
+        </section>
+
+        <!-- A obra: editor -->
+        <section class="panel" id="viewDestacatEditor" hidden>
+            <button type="button" class="back-link" id="dBackBtn">← Tornar</button>
+            <div class="panel-head">
+                <h1 id="dEditorTitle">Nou destacat</h1>
+            </div>
+
+            <form id="destacatForm" class="editor" novalidate>
+                <div class="editor-main">
+                    <div class="card">
+                        <label class="field">
+                            <span>Títol <em>*</em></span>
+                            <input type="text" name="titol" maxlength="80" required placeholder="Abans i després d'un bany">
+                            <small class="field-error" data-for="titol"></small>
+                        </label>
+                        <label class="field">
+                            <span>Etiqueta</span>
+                            <input type="text" name="etiqueta" maxlength="40" placeholder="Reformes">
+                            <small class="hint">Text petit que surt a sobre del títol.</small>
+                        </label>
+                        <label class="field">
+                            <span>Vídeo (opcional)</span>
+                            <input type="url" name="video_url" placeholder="https://www.youtube.com/watch?v=…">
+                            <small class="hint">Enllaç de YouTube o Vimeo. Si en poses un, la foto fa de portada.</small>
+                            <small class="field-error" data-for="video_url"></small>
+                        </label>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Foto vertical <em>*</em></h2>
+                        <p class="card-sub">Millor en format vertical, com les fotos del mòbil.</p>
+                        <div class="cover cover-vertical" id="dImgBox">
+                            <label class="drop drop-vertical" id="dImgDrop">
+                                <input type="file" accept="image/*" id="dImgInput" hidden>
+                                <span class="drop-icon" aria-hidden="true">＋</span>
+                                <span class="drop-text"><strong>Tria una foto</strong> o arrossega-la aquí</span>
+                            </label>
+                        </div>
+                        <small class="field-error" data-for="imatge"></small>
+                    </div>
+                </div>
+
+                <aside class="editor-side">
+                    <div class="card sticky">
+                        <h2 class="card-title">Publicació</h2>
+                        <label class="switch">
+                            <input type="checkbox" name="publicat" checked>
+                            <span class="switch-track" aria-hidden="true"></span>
+                            <span class="switch-label">Visible a la web</span>
+                        </label>
+                        <p class="form-error" id="dSaveError" role="alert" hidden></p>
+                        <button type="submit" class="btn btn-primary btn-block" id="dSaveBtn">Desar</button>
+                        <button type="button" class="btn btn-danger-ghost btn-block" id="dDeleteBtn" hidden>Esborrar</button>
                     </div>
                 </aside>
             </form>

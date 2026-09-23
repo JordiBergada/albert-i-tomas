@@ -231,3 +231,26 @@ a { color: inherit; }
     .segmented { grid-template-columns: 1fr; }
     .auth-card { padding: 34px 24px; }
 }
+
+/* Pestanyes de secció */
+.tabs { display: flex; gap: 8px; max-width: 1180px; margin: 0 auto; padding: 22px 28px 0; }
+.tab {
+    font: inherit; font-size: 0.92rem; font-weight: 600; padding: 10px 20px; border-radius: 999px;
+    border: 1px solid var(--border); background: transparent; color: var(--ink); cursor: pointer;
+    transition: background var(--t), border-color var(--t), color var(--t);
+}
+.tab:hover { border-color: var(--terracota); color: var(--terracota); }
+.tab.is-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.panel-note { color: var(--muted); font-size: 0.88rem; margin: -10px 0 22px; max-width: 640px; }
+
+.row-thumb.vertical { width: 60px; height: 84px; }
+.row.vertical { grid-template-columns: 60px minmax(0, 1fr) auto auto; }
+
+.cover-vertical { max-width: 260px; }
+.drop-vertical { aspect-ratio: 9 / 16; }
+
+@media (max-width: 640px) {
+    .tabs { padding: 16px 16px 0; }
+    .row.vertical { grid-template-columns: 60px minmax(0, 1fr); }
+}

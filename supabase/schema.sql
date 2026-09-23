@@ -104,3 +104,46 @@ create policy "admins esborren imatges" on storage.objects
 --   insert into public.admins (user_id)
 --   select id from auth.users where email = 'correu-del-client@exemple.com';
 -- =====================================================================
+
+-- =====================================================================
+-- BLOC 2 · Secció «A obra» de la home (afegit el 2026-09-23)
+-- Torna a executar aquest fitxer sencer: és segur, no esborra res.
+-- =====================================================================
+
+create table if not exists public.destacats (
+    id          uuid primary key default gen_random_uuid(),
+    created_at  timestamptz not null default now(),
+    updated_at  timestamptz not null default now(),
+    titol       text not null check (char_length(titol) between 2 and 80),
+    etiqueta    text check (char_length(etiqueta) <= 40),
+    imatge      jsonb not null,              -- {"full": "...", "thumb": "..."} · vertical
+    video_url   text check (video_url is null or video_url ~ '^https://(www\.)?(youtube\.com|youtu\.be|vimeo\.com|player\.vimeo\.com)/'),
+    ordre       int not null default 0,
+    publicat    boolean not null default true
+);
+
+create index if not exists destacats_llistat_idx
+    on public.destacats (publicat, ordre, created_at desc);
+
+drop trigger if exists destacats_updated_at on public.destacats;
+create trigger destacats_updated_at
+    before update on public.destacats
+    for each row execute function public.touch_updated_at();
+
+alter table public.destacats enable row level security;
+
+drop policy if exists "lectura publica destacats" on public.destacats;
+create policy "lectura publica destacats" on public.destacats
+    for select using (publicat or public.is_admin());
+
+drop policy if exists "admins creen destacats" on public.destacats;
+create policy "admins creen destacats" on public.destacats
+    for insert to authenticated with check (public.is_admin());
+
+drop policy if exists "admins editen destacats" on public.destacats;
+create policy "admins editen destacats" on public.destacats
+    for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "admins esborren destacats" on public.destacats;
+create policy "admins esborren destacats" on public.destacats
+    for delete to authenticated using (public.is_admin());

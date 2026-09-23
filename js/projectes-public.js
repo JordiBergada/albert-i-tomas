@@ -184,6 +184,94 @@
         }
     }
 
+
+    // ---------- Carrusel per categoria (pàgines de servei) ----------
+    async function renderCarrusels() {
+        const seccions = document.querySelectorAll('[data-projectes-cat]');
+        for (const sec of seccions) {
+            const track = sec.querySelector('.projects-track');
+            try {
+                const items = await API.llistarPublicats({ categoria: sec.dataset.projectesCat, limit: 10 });
+                if (!items.length) { sec.hidden = true; continue; }
+                track.innerHTML = items.map(p => `
+                    <a class="project-item" href="${urlProjecte(p.slug)}">
+                        <div class="project-item-image" style="background-image: url('${e(thumb(p))}');"></div>
+                        <div class="project-item-body">
+                            <span class="project-tag-light">${e(CATEGORIES[p.categoria])}</span>
+                            <h3>${e(p.titol)}</h3>
+                            ${p.resum ? `<p>${e(p.resum)}</p>` : ''}
+                            ${p.ubicacio || p.any_projecte ? `<span class="project-item-meta">${e([p.ubicacio, p.any_projecte].filter(Boolean).join(' · '))}</span>` : ''}
+                        </div>
+                    </a>`).join('');
+                sec.hidden = false;
+            } catch (err) {
+                console.error(err);
+                sec.hidden = true;
+            }
+        }
+    }
+
+
+    // ---------- «A obra»: destacats de la home ----------
+    async function renderDestacats() {
+        const track = document.getElementById('reelsTrack');
+        if (!track) return;
+        const sec = document.getElementById('reels');
+        try {
+            const items = await API.llistarDestacats();
+            if (!items.length) { sec.hidden = true; return; }
+            track.innerHTML = items.map((d, i) => {
+                const video = API.videoEmbedUrl(d.video_url);
+                return `
+                <article class="reel-card" data-index="${i}" data-video="${e(video || '')}" data-img="${e(imageUrl(d.imatge.full || d.imatge.thumb))}"
+                         style="background-image: url('${e(imageUrl(d.imatge.thumb || d.imatge.full))}');">
+                    <button type="button" class="reel-overlay" aria-label="${e(d.titol)}">
+                        ${video ? `<span class="reel-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></span>` : '<span class="reel-play-spacer" aria-hidden="true"></span>'}
+                        <span class="reel-meta">
+                            ${d.etiqueta ? `<span class="reel-tag">${e(d.etiqueta)}</span>` : ''}
+                            <span class="reel-title">${e(d.titol)}</span>
+                        </span>
+                    </button>
+                </article>`;
+            }).join('');
+            sec.hidden = false;
+            initReelsViewer(track);
+        } catch (err) {
+            console.error(err);
+            sec.hidden = true;
+        }
+    }
+
+    function initReelsViewer(track) {
+        const box = document.createElement('div');
+        box.className = 'lightbox';
+        box.hidden = true;
+        box.innerHTML = `
+            <button type="button" class="lightbox-close" aria-label="Tancar">&times;</button>
+            <div class="lightbox-stage"></div>`;
+        document.body.appendChild(box);
+        const stage = box.querySelector('.lightbox-stage');
+        const close = () => {
+            box.hidden = true;
+            stage.innerHTML = '';
+            document.body.style.overflow = '';
+        };
+        track.addEventListener('click', (ev) => {
+            const card = ev.target.closest('.reel-card');
+            if (!card) return;
+            const video = card.dataset.video;
+            stage.innerHTML = video
+                ? `<div class="lightbox-video"><iframe src="${video}?autoplay=1" title="Vídeo" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`
+                : `<img class="lightbox-img" src="${card.dataset.img}" alt="">`;
+            box.hidden = false;
+            document.body.style.overflow = 'hidden';
+            box.querySelector('.lightbox-close').focus();
+        });
+        box.querySelector('.lightbox-close').addEventListener('click', close);
+        box.addEventListener('click', (ev) => { if (ev.target === box) close(); });
+        document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && !box.hidden) close(); });
+    }
+
     // ---------- Lightbox ----------
     function initLightbox(urls, titol) {
         if (!urls.length) return;
@@ -245,6 +333,8 @@
     }
 
     renderHome();
+    renderCarrusels();
+    renderDestacats();
     renderLlistat();
     renderFitxa();
 })();

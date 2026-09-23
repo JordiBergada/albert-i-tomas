@@ -24,9 +24,14 @@
         ['login', 'reset', 'app'].forEach(v => { views[v].hidden = v !== view; });
     }
 
+    const panels = {
+        list: '#viewList', editor: '#viewEditor',
+        destacats: '#viewDestacats', destacatEditor: '#viewDestacatEditor'
+    };
+
     function showPanel(panel) {
-        views.list.hidden = panel !== 'list';
-        views.editor.hidden = panel !== 'editor';
+        Object.entries(panels).forEach(([k, sel]) => { $(sel).hidden = k !== panel; });
+        $('#sectionTabs').hidden = panel !== 'list' && panel !== 'destacats';
         window.scrollTo({ top: 0 });
     }
 
@@ -651,6 +656,269 @@
     $('#deleteBtn').addEventListener('click', () => {
         const p = projects.find(x => x.id === editor.id) || { id: editor.id, titol: form.titol.value };
         deleteProject(p);
+    });
+
+    // ================= A obra (destacats) =================
+    let destacats = [];
+    let editorD = null;
+
+    $('#sectionTabs').addEventListener('click', (ev) => {
+        const tab = ev.target.closest('.tab');
+        if (!tab) return;
+        $('#sectionTabs').querySelectorAll('.tab').forEach(t => t.classList.toggle('is-active', t === tab));
+        if (tab.dataset.section === 'destacats') { showPanel('destacats'); loadDestacats(); }
+        else { showPanel('list'); loadList(); }
+    });
+
+    async function loadDestacats() {
+        $('#dCount').textContent = 'Carregant…';
+        try {
+            destacats = await API.llistarDestacats({ nomesPublicats: false });
+            renderDestacatsList();
+        } catch (err) {
+            console.error(err);
+            $('#dCount').textContent = 'No s\'ha pogut carregar. Has executat el SQL del bloc 2?';
+        }
+    }
+
+    function renderDestacatsList() {
+        const publicats = destacats.filter(d => d.publicat).length;
+        $('#dCount').textContent = destacats.length
+            ? `${destacats.length} element${destacats.length === 1 ? '' : 's'} · ${publicats} visible${publicats === 1 ? '' : 's'}`
+            : 'Cap element encara';
+        $('#dEmpty').hidden = destacats.length > 0;
+        $('#dRows').innerHTML = destacats.map((d, i) => `
+            <li class="row vertical${d.publicat ? '' : ' is-draft'}" data-id="${e(d.id)}">
+                <div class="row-thumb vertical" style="background-image:url('${e(API.imageUrl(d.imatge && (d.imatge.thumb || d.imatge.full)))}')"></div>
+                <div class="row-main">
+                    <button type="button" class="row-title" data-action="edit">${e(d.titol)}</button>
+                    <div class="row-meta">
+                        ${d.etiqueta ? `<span class="pill">${e(d.etiqueta)}</span>` : ''}
+                        ${d.publicat ? '' : '<span class="pill pill-draft">Amagat</span>'}
+                        ${d.video_url ? '<span>Amb vídeo</span>' : '<span>Només foto</span>'}
+                    </div>
+                </div>
+                <div class="row-order">
+                    <button type="button" class="icon-btn" data-action="up" aria-label="Pujar" ${i > 0 ? '' : 'disabled'}>▲</button>
+                    <button type="button" class="icon-btn" data-action="down" aria-label="Baixar" ${i < destacats.length - 1 ? '' : 'disabled'}>▼</button>
+                </div>
+                <div class="row-actions">
+                    <button type="button" class="icon-btn" data-action="edit" aria-label="Editar" title="Editar">✎</button>
+                    <button type="button" class="icon-btn danger" data-action="delete" aria-label="Esborrar" title="Esborrar">🗑</button>
+                </div>
+            </li>`).join('');
+    }
+
+    $('#dRows').addEventListener('click', async (ev) => {
+        const btn = ev.target.closest('[data-action]');
+        if (!btn) return;
+        const d = destacats.find(x => x.id === btn.closest('.row').dataset.id);
+        if (!d) return;
+        const a = btn.dataset.action;
+        if (a === 'edit') openDestacat(d);
+        if (a === 'up' || a === 'down') await moveDestacat(d, a === 'up' ? -1 : 1);
+        if (a === 'delete') deleteDestacat(d);
+    });
+
+    async function moveDestacat(d, dir) {
+        const i = destacats.indexOf(d), j = i + dir;
+        if (j < 0 || j >= destacats.length) return;
+        [destacats[i], destacats[j]] = [destacats[j], destacats[i]];
+        const updates = [];
+        destacats.forEach((x, k) => { if (x.ordre !== k * 10) { x.ordre = k * 10; updates.push(x); } });
+        renderDestacatsList();
+        const res = await Promise.all(updates.map(x => client.from('destacats').update({ ordre: x.ordre }).eq('id', x.id)));
+        if (res.some(r => r.error)) { toast('No s\'ha pogut desar l\'ordre.', true); loadDestacats(); }
+    }
+
+    async function deleteDestacat(d) {
+        if (!confirm(`Segur que vols esborrar «${d.titol}»?`)) return;
+        const { error } = await client.from('destacats').delete().eq('id', d.id);
+        if (error) { console.error(error); toast('No s\'ha pogut esborrar.', true); return; }
+        if (d.imatge) await client.storage.from(API.BUCKET).remove([d.imatge.full, d.imatge.thumb].filter(Boolean));
+        toast('Esborrat.');
+        showPanel('destacats');
+        loadDestacats();
+    }
+
+    $('#dNewBtn').addEventListener('click', () => openDestacat(null));
+    $('#dEmpty [data-action="dnew"]').addEventListener('click', () => openDestacat(null));
+    $('#dBackBtn').addEventListener('click', () => {
+        if (dirty && !confirm('Tens canvis sense desar. Vols tornar igualment?')) return;
+        dirty = false;
+        showPanel('destacats');
+        loadDestacats();
+    });
+
+    const dForm = $('#destacatForm');
+
+    function openDestacat(d) {
+        dForm.reset();
+        dForm.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; });
+        dForm.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+        setError($('#dSaveError'), '');
+        editorD = {
+            id: d ? d.id : null,
+            imatge: d && d.imatge ? { kind: 'existing', full: d.imatge.full, thumb: d.imatge.thumb, preview: API.imageUrl(d.imatge.thumb || d.imatge.full) } : null,
+            removed: []
+        };
+        $('#dEditorTitle').textContent = d ? 'Editar destacat' : 'Nou destacat';
+        $('#dDeleteBtn').hidden = !d;
+        if (d) {
+            dForm.titol.value = d.titol || '';
+            dForm.etiqueta.value = d.etiqueta || '';
+            dForm.video_url.value = d.video_url || '';
+            dForm.publicat.checked = d.publicat;
+        }
+        renderDImg();
+        dirty = false;
+        showPanel('destacatEditor');
+        dForm.titol.focus();
+    }
+
+    function renderDImg() {
+        const box = $('#dImgBox');
+        box.querySelectorAll('.cover-preview').forEach(n => n.remove());
+        const drop = $('#dImgDrop');
+        if (!editorD.imatge) { drop.hidden = false; return; }
+        drop.hidden = true;
+        const prev = document.createElement('div');
+        prev.className = 'cover-preview';
+        prev.style.cssText = `aspect-ratio:9/16;background-image:url("${editorD.imatge.preview}")`;
+        prev.innerHTML = `<div class="tile-actions">
+            <button type="button" data-dimg="change" title="Canviar" aria-label="Canviar foto">⟳</button>
+            <button type="button" data-dimg="remove" title="Treure" aria-label="Treure foto">✕</button>
+        </div>`;
+        box.prepend(prev);
+    }
+
+    $('#dImgBox').addEventListener('click', (ev) => {
+        const b = ev.target.closest('[data-dimg]');
+        if (!b) return;
+        if (b.dataset.dimg === 'change') $('#dImgInput').click();
+        if (b.dataset.dimg === 'remove') {
+            if (editorD.imatge.kind === 'existing') editorD.removed.push(editorD.imatge.full, editorD.imatge.thumb);
+            else URL.revokeObjectURL(editorD.imatge.preview);
+            editorD.imatge = null;
+            dirty = true;
+            renderDImg();
+        }
+    });
+
+    function setDImg(file) {
+        if (editorD.imatge) {
+            if (editorD.imatge.kind === 'existing') editorD.removed.push(editorD.imatge.full, editorD.imatge.thumb);
+            else URL.revokeObjectURL(editorD.imatge.preview);
+        }
+        editorD.imatge = { kind: 'new', file, preview: URL.createObjectURL(file) };
+        const fe = dForm.querySelector('.field-error[data-for="imatge"]');
+        if (fe) fe.textContent = '';
+        dirty = true;
+        renderDImg();
+    }
+
+    $('#dImgInput').addEventListener('change', (ev) => {
+        const [file] = acceptImages(ev.target.files);
+        if (file) setDImg(file);
+        ev.target.value = '';
+    });
+
+    (() => {
+        const zone = $('#dImgDrop');
+        zone.addEventListener('dragover', (ev) => { if (ev.dataTransfer.types.includes('Files')) { ev.preventDefault(); zone.classList.add('is-over'); } });
+        zone.addEventListener('dragleave', () => zone.classList.remove('is-over'));
+        zone.addEventListener('drop', (ev) => {
+            if (!ev.dataTransfer.files.length) return;
+            ev.preventDefault();
+            zone.classList.remove('is-over');
+            const [file] = acceptImages(ev.dataTransfer.files);
+            if (file) setDImg(file);
+        });
+    })();
+
+    dForm.addEventListener('input', (ev) => {
+        dirty = true;
+        const field = ev.target.closest('.field');
+        if (field) {
+            field.classList.remove('has-error');
+            const fe = dForm.querySelector(`.field-error[data-for="${ev.target.name}"]`);
+            if (fe) fe.textContent = '';
+        }
+    });
+
+    dForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        setError($('#dSaveError'), '');
+        const errors = [];
+        const titol = dForm.titol.value.trim();
+        const setFE = (name, msg) => {
+            const fe = dForm.querySelector(`.field-error[data-for="${name}"]`);
+            if (fe) fe.textContent = msg;
+            const inp = dForm.elements[name];
+            const f = (inp && inp.closest) ? inp.closest('.field') : null;
+            if (f) f.classList.add('has-error');
+            errors.push(name);
+        };
+        if (titol.length < 2) setFE('titol', 'Escriu un títol.');
+        const video = dForm.video_url.value.trim();
+        if (video && !API.videoEmbedUrl(video)) setFE('video_url', 'Enganxa un enllaç de YouTube o Vimeo.');
+        if (!editorD.imatge) setFE('imatge', 'Afegeix una foto.');
+        if (errors.length) return;
+
+        const btn = $('#dSaveBtn');
+        const label = btn.textContent;
+        btn.disabled = true;
+        const isNew = !editorD.id;
+        const id = editorD.id || crypto.randomUUID();
+        const pujades = [];
+
+        try {
+            let imatge;
+            if (editorD.imatge.kind === 'existing') {
+                imatge = { full: editorD.imatge.full, thumb: editorD.imatge.thumb };
+            } else {
+                btn.textContent = 'Pujant la foto…';
+                imatge = await uploadItem(editorD.imatge, `destacats/${id}`);
+                pujades.push(imatge.full, imatge.thumb);
+            }
+
+            btn.textContent = 'Desant…';
+            const payload = {
+                titol,
+                etiqueta: dForm.etiqueta.value.trim() || null,
+                video_url: video || null,
+                imatge,
+                publicat: dForm.publicat.checked
+            };
+            let error;
+            if (isNew) {
+                const minOrdre = destacats.length ? Math.min(...destacats.map(d => d.ordre)) : 10;
+                ({ error } = await client.from('destacats').insert({ id, ordre: minOrdre - 10, ...payload }));
+            } else {
+                ({ error } = await client.from('destacats').update(payload).eq('id', id));
+            }
+            if (error) throw error;
+
+            if (editorD.removed.length) await client.storage.from(API.BUCKET).remove(editorD.removed.filter(Boolean));
+            dirty = false;
+            toast(isNew ? 'Afegit a «A obra».' : 'Canvis desats.');
+            showPanel('destacats');
+            loadDestacats();
+        } catch (err) {
+            console.error(err);
+            if (pujades.length) client.storage.from(API.BUCKET).remove(pujades);
+            setError($('#dSaveError'), err && err.message && !err.code
+                ? err.message
+                : 'No s\'ha pogut desar. Revisa la connexió i torna-ho a provar.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = label;
+        }
+    });
+
+    $('#dDeleteBtn').addEventListener('click', () => {
+        const d = destacats.find(x => x.id === editorD.id) || { id: editorD.id, titol: dForm.titol.value };
+        deleteDestacat(d);
     });
 
     init();

@@ -39,6 +39,33 @@
         });
     }
 
+
+    // Submenú de serveis
+    document.querySelectorAll('.nav-has-sub').forEach(item => {
+        const btn = item.querySelector('.nav-sub-toggle');
+        btn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const open = item.classList.toggle('is-open');
+            btn.setAttribute('aria-expanded', String(open));
+        });
+    });
+
+    document.addEventListener('click', (ev) => {
+        document.querySelectorAll('.nav-has-sub.is-open').forEach(item => {
+            if (item.contains(ev.target)) return;
+            item.classList.remove('is-open');
+            item.querySelector('.nav-sub-toggle').setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    document.addEventListener('keydown', (ev) => {
+        if (ev.key !== 'Escape') return;
+        document.querySelectorAll('.nav-has-sub.is-open').forEach(item => {
+            item.classList.remove('is-open');
+            item.querySelector('.nav-sub-toggle').setAttribute('aria-expanded', 'false');
+        });
+    });
+
     // FAQ: tanca els altres quan se n'obre un
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach(item => {

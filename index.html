@@ -31,7 +31,18 @@
             <nav class="nav" id="nav">
                 <ul>
                     <li><a href="index.html">Inici</a></li>
-                    <li><a href="index.html#serveis">Serveis</a></li>
+                    <li class="nav-has-sub">
+                        <button type="button" class="nav-sub-toggle" aria-expanded="false" aria-controls="navSubServeis">
+                            Serveis
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-sub" id="navSubServeis">
+                            <li><a href="serveis/obra-nova.html">Obra nova</a></li>
+                            <li><a href="serveis/reformes-integrals.html">Reformes integrals</a></li>
+                            <li><a href="serveis/piscines.html">Piscines</a></li>
+                            <li><a href="serveis/treballs-amb-pedra.html">Treballs amb pedra</a></li>
+                        </ul>
+                    </li>
                     <li><a href="casos-exit.html">Casos d'èxit</a></li>
                     <li><a href="nosaltres.html">Nosaltres</a></li>
                     <li><a href="contacte.html" class="nav-cta">Demana pressupost</a></li>
@@ -47,10 +58,7 @@
 
         <div class="container hero-content">
             <span class="hero-eyebrow">Tàrrega · Des de 1998</span>
-            <h1>
-                Reformes i petites obres<br>
-                fetes amb bon ofici.
-            </h1>
+            <h1>Reformes i petites obres fetes amb bon ofici.</h1>
             <p class="hero-subtitle">
                 Més de 25 anys fent obra nova, reformes integrals, piscines i treballs amb pedra amb un tracte proper, materials honestos i acabats acurats.
             </p>
@@ -65,20 +73,6 @@
             </div>
         </div>
 
-        <div class="hero-stats">
-            <div class="stat">
-                <span class="stat-num">25<i>+</i></span>
-                <span class="stat-label">Anys d'experiència</span>
-            </div>
-            <div class="stat">
-                <span class="stat-num">350<i>+</i></span>
-                <span class="stat-label">Projectes realitzats</span>
-            </div>
-            <div class="stat">
-                <span class="stat-num">100<i>%</i></span>
-                <span class="stat-label">Compromís i terminis</span>
-            </div>
-        </div>
     </section>
 
     <!-- Trust strip -->
@@ -111,7 +105,7 @@
             <div class="services-grid services-grid-4">
                 <a href="serveis/obra-nova.html" class="service-card">
                     <span class="service-num">01</span>
-                    <div class="service-image" style="background-image: url('https://images.unsplash.com/photo-1587582423116-ec07293f0395?auto=format&fit=crop&w=1200&q=80');"></div>
+                    <div class="service-image" style="background-image: url('https://images.unsplash.com/photo-1632862378069-4ad0348cea4f?auto=format&fit=crop&w=1200&q=80');"></div>
                     <div class="service-body">
                         <h3>Obra nova</h3>
                         <p>Construcció integral de cases i edificis des dels fonaments fins al lliurament de claus.</p>
@@ -301,7 +295,7 @@
     </section>
 
     <!-- Reels -->
-    <section class="section section-reels" id="reels">
+    <section class="section section-reels" id="reels" hidden>
         <div class="container">
             <header class="section-header section-header-row">
                 <div>
@@ -314,79 +308,7 @@
                 </a>
             </header>
 
-            <div class="reels-track">
-                <article class="reel-card" style="background-image: url('https://images.unsplash.com/photo-1614127938540-a1139bee1841?auto=format&fit=crop&w=600&q=80');">
-                    <div class="reel-overlay">
-                        <button class="reel-play" aria-label="Reproduir reel">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                        </button>
-                        <div class="reel-meta">
-                            <span class="reel-tag">Obra nova</span>
-                            <h4>Estructura en marxa</h4>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="reel-card" style="background-image: url('https://images.unsplash.com/photo-1505798577917-a65157d3320a?auto=format&fit=crop&w=600&q=80');">
-                    <div class="reel-overlay">
-                        <button class="reel-play" aria-label="Reproduir reel">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                        </button>
-                        <div class="reel-meta">
-                            <span class="reel-tag">Reformes</span>
-                            <h4>Abans i després</h4>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="reel-card" style="background-image: url('https://images.unsplash.com/photo-1605932870425-8c18882e1e49?auto=format&fit=crop&w=600&q=80');">
-                    <div class="reel-overlay">
-                        <button class="reel-play" aria-label="Reproduir reel">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                        </button>
-                        <div class="reel-meta">
-                            <span class="reel-tag">Pedra</span>
-                            <h4>Col·locant pedra</h4>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="reel-card" style="background-image: url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80');">
-                    <div class="reel-overlay">
-                        <button class="reel-play" aria-label="Reproduir reel">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                        </button>
-                        <div class="reel-meta">
-                            <span class="reel-tag">Piscines</span>
-                            <h4>El vas de la piscina</h4>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="reel-card" style="background-image: url('https://images.unsplash.com/photo-1541888894402-f3b1af908be4?auto=format&fit=crop&w=600&q=80');">
-                    <div class="reel-overlay">
-                        <button class="reel-play" aria-label="Reproduir reel">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                        </button>
-                        <div class="reel-meta">
-                            <span class="reel-tag">Acabats</span>
-                            <h4>Els últims detalls</h4>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="reel-card" style="background-image: url('https://images.unsplash.com/photo-1541888915364-aaeed51d238b?auto=format&fit=crop&w=600&q=80');">
-                    <div class="reel-overlay">
-                        <button class="reel-play" aria-label="Reproduir reel">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                        </button>
-                        <div class="reel-meta">
-                            <span class="reel-tag">Equip</span>
-                            <h4>Un dia a obra</h4>
-                        </div>
-                    </div>
-                </article>
-            </div>
+            <div class="reels-track" id="reelsTrack"></div>
         </div>
     </section>
 
