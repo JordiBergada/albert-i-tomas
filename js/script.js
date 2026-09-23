@@ -40,6 +40,27 @@
     }
 
 
+
+    // Vídeo del hero: no es carrega si l'usuari estalvia dades o vol menys moviment
+    const heroVideo = document.getElementById('heroVideo');
+    if (heroVideo) {
+        const conn = navigator.connection || {};
+        const estalvia = conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '');
+        const menysMoviment = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (estalvia || menysMoviment) {
+            heroVideo.remove();
+        } else {
+            heroVideo.addEventListener('playing', () => heroVideo.classList.add('is-ready'), { once: true });
+            const provaReproduir = () => heroVideo.play().catch(() => {});
+            provaReproduir();
+            // Si el navegador bloqueja la reproducció automàtica, ho tornem a provar quan l'usuari interactua
+            ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(ev =>
+                window.addEventListener(ev, provaReproduir, { once: true, passive: true })
+            );
+        }
+    }
+
     // Submenú de serveis
     document.querySelectorAll('.nav-has-sub').forEach(item => {
         const btn = item.querySelector('.nav-sub-toggle');
