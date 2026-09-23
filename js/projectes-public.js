@@ -5,10 +5,8 @@
     if (!API || !API.configured) return;
 
     const { CATEGORIES, escapeHtml: e, imageUrl } = API;
-    const base = document.body.dataset.base || '';
-
     function urlProjecte(slug) {
-        return `${base}projecte.html?p=${encodeURIComponent(slug)}`;
+        return `/projecte?p=${encodeURIComponent(slug)}`;
     }
 
     function thumb(p) {
@@ -88,7 +86,7 @@
                         <h1>No hem trobat aquest projecte.</h1>
                         <p class="page-hero-subtitle">Pot ser que s'hagi retirat o que l'enllaç no sigui correcte.</p>
                         <div class="hero-actions" style="margin-top:32px">
-                            <a href="${base}casos-exit.html" class="btn btn-primary">Veure tots els projectes</a>
+                            <a href="/casos-exit" class="btn btn-primary">Veure tots els projectes</a>
                         </div>
                     </div>
                 </section>`;
@@ -125,11 +123,11 @@
                     <div class="hero-overlay" aria-hidden="true"></div>
                     <div class="container project-hero-content">
                         <nav class="breadcrumb" aria-label="Ruta">
-                            <a href="${base}index.html">Inici</a><span class="breadcrumb-sep">/</span>
-                            <a href="${base}casos-exit.html">Casos d'èxit</a><span class="breadcrumb-sep">/</span>
+                            <a href="/">Inici</a><span class="breadcrumb-sep">/</span>
+                            <a href="/casos-exit">Casos d'èxit</a><span class="breadcrumb-sep">/</span>
                             <span>${e(p.titol)}</span>
                         </nav>
-                        <a class="project-hero-tag" href="${base}casos-exit.html?cat=${e(p.categoria)}">${e(cat)}</a>
+                        <a class="project-hero-tag" href="/casos-exit?cat=${e(p.categoria)}">${e(cat)}</a>
                         <h1>${e(p.titol)}</h1>
                     </div>
                 </section>
@@ -141,7 +139,7 @@
                             ${p.resum ? `<p class="project-aside-lead">${e(p.resum)}</p>` : ''}
                             ${paragrafs.map(t => `<p class="project-aside-text">${e(t)}</p>`).join('')}
                             ${dades.length ? `<dl class="project-facts">${dades.map(([k, v]) => `<div><dt>${e(k)}</dt><dd>${e(v)}</dd></div>`).join('')}</dl>` : ''}
-                            <a href="${base}contacte.html" class="btn btn-primary btn-full">
+                            <a href="/contacte" class="btn btn-primary btn-full">
                                 Vull un projecte com aquest
                                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                             </a>

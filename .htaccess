@@ -1,3 +1,20 @@
+# URL netes: /nosaltres en lloc de /nosaltres.html
+RewriteEngine On
+RewriteBase /
+
+# index.html -> /
+RewriteCond %{THE_REQUEST} \s/+(.*?)index\.html[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# qualsevol .html -> URL neta
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# serveix el fitxer .html corresponent
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
 # L'HTML sempre es revalida; CSS i JS porten ?v=<commit> i es poden guardar molt de temps.
 <IfModule mod_headers.c>
     <FilesMatch "\.html$">

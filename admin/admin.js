@@ -191,7 +191,7 @@
                 </div>
                 <div class="row-actions">
                     <button type="button" class="icon-btn" data-action="edit" aria-label="Editar" title="Editar">✎</button>
-                    ${p.publicat ? `<a class="icon-btn" href="../projecte.html?p=${encodeURIComponent(p.slug)}" target="_blank" rel="noopener" aria-label="Veure a la web" title="Veure a la web">↗</a>` : ''}
+                    ${p.publicat ? `<a class="icon-btn" href="/projecte?p=${encodeURIComponent(p.slug)}" target="_blank" rel="noopener" aria-label="Veure a la web" title="Veure a la web">↗</a>` : ''}
                     <button type="button" class="icon-btn danger" data-action="delete" aria-label="Esborrar" title="Esborrar">🗑</button>
                 </div>
             </li>`;
@@ -296,7 +296,7 @@
         $('#deleteBtn').hidden = !p;
         const link = $('#viewLink');
         link.hidden = !(p && p.publicat);
-        if (p) link.href = `../projecte.html?p=${encodeURIComponent(p.slug)}`;
+        if (p) link.href = `/projecte?p=${encodeURIComponent(p.slug)}`;
 
         if (p) {
             form.titol.value = p.titol || '';
