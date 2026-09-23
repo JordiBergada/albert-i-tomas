@@ -1496,7 +1496,9 @@ a.contact-item:hover {
 .service-hero-content {
     position: relative;
     z-index: 2;
-    max-width: 780px;
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
 }
 
 .breadcrumb {
@@ -1719,7 +1721,9 @@ a.contact-item:hover {
 }
 
 .page-hero-content {
-    max-width: 760px;
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
 }
 
 .page-hero h1 {
