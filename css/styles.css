@@ -459,7 +459,7 @@ em { font-style: normal; color: var(--terracota); }
 .hero-bg {
     position: absolute;
     inset: 0;
-    background-image: url('../images/hero-poster.webp');
+    background-image: url('../images/hero-obra-poster.webp');
     background-size: cover;
     background-position: center;
     transform: scale(1.06);
