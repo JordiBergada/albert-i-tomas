@@ -122,28 +122,31 @@
     async function enviarMissatge({ empresa, ...dades }) {
         if (empresa) return;   // parany per a robots: no enviem res
 
-        // Via principal: l'Edge Function desa el missatge i avisa el client per correu.
-        try {
-            const res = await fetch(`${cfg.SUPABASE_URL}/functions/v1/enviar-missatge`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    apikey: cfg.SUPABASE_ANON_KEY,
-                    Authorization: `Bearer ${cfg.SUPABASE_ANON_KEY}`
-                },
-                body: JSON.stringify({ ...dades, empresa: '' })
-            });
-            if (res.ok) return;
-            if (res.status === 400) throw new Error('Dades del formulari no vàlides');
-            console.warn('Edge Function no disponible (' + res.status + '): desem el missatge directament.');
-        } catch (err) {
-            if (err && err.message === 'Dades del formulari no vàlides') throw err;
-            console.warn('No s\'ha pogut cridar l\'Edge Function: desem el missatge directament.', err);
-        }
-
-        // Pla B: si la funció encara no està desplegada, el missatge no es perd.
+        // 1. Desem la consulta: encara que el correu falli, no es perd res.
         const { error } = await client.from('missatges').insert(dades);
         if (error) throw error;
+
+        // 2. Avisem el client per correu.
+        if (!cfg.FORM_AVIS_ENDPOINT) return;
+        try {
+            await fetch(cfg.FORM_AVIS_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify({
+                    _subject: `Nova consulta del web · ${dades.nom}`,
+                    _replyto: dades.email,
+                    _template: 'table',
+                    _captcha: 'false',
+                    Nom: dades.nom,
+                    'Telèfon': dades.telefon,
+                    Correu: dades.email,
+                    Servei: CATEGORIES[dades.servei] || dades.servei || '—',
+                    Missatge: dades.missatge
+                })
+            });
+        } catch (err) {
+            console.warn('No s\'ha pogut enviar l\'avís per correu:', err);
+        }
     }
 
     async function llistarMissatges() {

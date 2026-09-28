@@ -2,8 +2,14 @@
 // Construccions i Reformes Albert i Tomàs
 // Edge Function: desa el missatge del formulari i l'envia per correu (Resend)
 //
+// OPCIONAL i ARA MATEIX NO S'UTILITZA. El web envia els avisos amb FormSubmit
+// (js/config.js → FORM_AVIS_ENDPOINT), que no demana cap domini verificat.
+// Aquesta funció és el pas següent per quan el client tingui domini propi:
+// remitent amb el seu domini, millor entrega i sense passar per tercers.
+//
 // Desplegament: Supabase → Edge Functions → Deploy a new function →
-//   nom: enviar-missatge · enganxa aquest fitxer sencer.
+//   nom: enviar-missatge · enganxa aquest fitxer sencer,
+//   i canvia enviarMissatge() de js/projectes-api.js perquè hi cridi.
 //
 // Secrets necessaris (Edge Functions → Secrets):
 //   RESEND_API_KEY     clau d'API de Resend (re_...)
