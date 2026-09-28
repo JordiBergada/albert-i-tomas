@@ -119,9 +119,21 @@
         return data;
     }
 
+    async function enviarMissatge(dades) {
+        const { error } = await client.from('missatges').insert(dades);
+        if (error) throw error;
+    }
+
+    async function llistarMissatges() {
+        const { data, error } = await client.from('missatges').select('*')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
+    }
+
     window.ProjectesAPI = {
         CATEGORIES, configured, client, BUCKET,
         imageUrl, escapeHtml, slugify, videoEmbedUrl,
-        llistarPublicats, obtenirPerSlug, llistarDestacats, llistarTestimonis, llistarFaqs
+        llistarPublicats, obtenirPerSlug, llistarDestacats, llistarTestimonis, llistarFaqs, enviarMissatge, llistarMissatges
     };
 })();

@@ -73,6 +73,7 @@
             <button type="button" class="tab" data-section="destacats">A obra</button>
             <button type="button" class="tab" data-section="testimonis">Testimonis</button>
             <button type="button" class="tab" data-section="faqs">Preguntes freqüents</button>
+            <button type="button" class="tab" data-section="missatges">Missatges <span class="tab-badge" id="mBadge" hidden>0</span></button>
         </nav>
 
         <!-- Llistat -->
@@ -420,6 +421,23 @@
                     </div>
                 </aside>
             </form>
+        </section>
+
+        <!-- Missatges del formulari -->
+        <section class="panel" id="viewMissatges" hidden>
+            <div class="panel-head">
+                <div>
+                    <h1>Missatges</h1>
+                    <p class="panel-sub" id="mCount">Carregant…</p>
+                </div>
+                <button type="button" class="btn btn-ghost" id="mRefresh">Actualitzar</button>
+            </div>
+            <p class="panel-note">Consultes rebudes pel formulari de la pàgina de contacte.</p>
+            <ul class="rows" id="mRows" aria-live="polite"></ul>
+            <div class="empty" id="mEmpty" hidden>
+                <h2>Cap missatge</h2>
+                <p>Aquí hi apareixeran les consultes que arribin pel formulari de contacte.</p>
+            </div>
         </section>
     </div>
 

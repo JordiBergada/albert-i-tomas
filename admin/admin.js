@@ -28,12 +28,13 @@
         list: '#viewList', editor: '#viewEditor',
         destacats: '#viewDestacats', destacatEditor: '#viewDestacatEditor',
         testimonis: '#viewTestimonis', testimoniEditor: '#viewTestimoniEditor',
-        faqs: '#viewFaqs', faqEditor: '#viewFaqEditor'
+        faqs: '#viewFaqs', faqEditor: '#viewFaqEditor',
+        missatges: '#viewMissatges'
     };
 
     function showPanel(panel) {
         Object.entries(panels).forEach(([k, sel]) => { $(sel).hidden = k !== panel; });
-        $('#sectionTabs').hidden = !['list', 'destacats', 'testimonis', 'faqs'].includes(panel);
+        $('#sectionTabs').hidden = !['list', 'destacats', 'testimonis', 'faqs', 'missatges'].includes(panel);
         window.scrollTo({ top: 0 });
     }
 
@@ -672,6 +673,7 @@
         if (s === 'destacats') { showPanel('destacats'); loadDestacats(); }
         else if (s === 'testimonis') { showPanel('testimonis'); loadTestimonis(); }
         else if (s === 'faqs') { showPanel('faqs'); loadFaqs(); }
+        else if (s === 'missatges') { showPanel('missatges'); loadMissatges(); }
         else { showPanel('list'); loadList(); }
     });
 
@@ -1168,5 +1170,92 @@
         seccioFaqs.render();
     });
 
+    // ================= Missatges del formulari =================
+    let missatges = [];
+
+    async function loadMissatges() {
+        $('#mCount').textContent = 'Carregant…';
+        try {
+            missatges = await API.llistarMissatges();
+            renderMissatges();
+        } catch (err) {
+            console.error(err);
+            $('#mCount').textContent = 'No s\'ha pogut carregar. Has executat el SQL del bloc 4?';
+        }
+    }
+
+    function renderMissatges() {
+        const nous = missatges.filter(m => !m.llegit).length;
+        $('#mCount').textContent = missatges.length
+            ? `${missatges.length} missatge${missatges.length === 1 ? '' : 's'} · ${nous} sense llegir`
+            : 'Cap missatge encara';
+        $('#mEmpty').hidden = missatges.length > 0;
+        actualitzaBadge(nous);
+
+        const data = iso => new Date(iso).toLocaleString('ca-ES', {
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        const telNet = t => t.replace(/[^0-9+]/g, '');
+
+        $('#mRows').innerHTML = missatges.map(m => `
+            <li class="row msg${m.llegit ? '' : ' no-llegit'}" data-id="${e(m.id)}">
+                <div class="msg-top">
+                    <span class="msg-nom">${e(m.nom)}${m.servei ? ` · <span class="pill">${e(PAGINES[m.servei] || m.servei)}</span>` : ''}</span>
+                    <span class="msg-data">${e(data(m.created_at))}</span>
+                </div>
+                <div class="msg-contacte">
+                    <a href="tel:${e(telNet(m.telefon))}">${e(m.telefon)}</a>
+                    <a href="https://wa.me/${e(telNet(m.telefon).replace('+', '').replace(/^(?!34)/, '34'))}" target="_blank" rel="noopener">WhatsApp</a>
+                    <a href="mailto:${e(m.email)}">${e(m.email)}</a>
+                </div>
+                <p class="msg-text">${e(m.missatge)}</p>
+                <div class="msg-accions">
+                    <button type="button" class="btn btn-ghost btn-sm" data-action="llegit">${m.llegit ? 'Marcar com a no llegit' : 'Marcar com a llegit'}</button>
+                    <button type="button" class="btn btn-danger-ghost btn-sm" data-action="delete">Esborrar</button>
+                </div>
+            </li>`).join('');
+    }
+
+    function actualitzaBadge(nous) {
+        const badge = $('#mBadge');
+        badge.textContent = nous;
+        badge.hidden = !nous;
+    }
+
+    $('#mRows').addEventListener('click', async (ev) => {
+        const btn = ev.target.closest('[data-action]');
+        if (!btn) return;
+        const m = missatges.find(x => x.id === btn.closest('.row').dataset.id);
+        if (!m) return;
+
+        if (btn.dataset.action === 'llegit') {
+            const { error } = await client.from('missatges').update({ llegit: !m.llegit }).eq('id', m.id);
+            if (error) { toast('No s\'ha pogut desar.', true); return; }
+            m.llegit = !m.llegit;
+            renderMissatges();
+        }
+
+        if (btn.dataset.action === 'delete') {
+            if (!confirm(`Segur que vols esborrar el missatge de ${m.nom}?`)) return;
+            const { error } = await client.from('missatges').delete().eq('id', m.id);
+            if (error) { toast('No s\'ha pogut esborrar.', true); return; }
+            missatges = missatges.filter(x => x.id !== m.id);
+            renderMissatges();
+            toast('Missatge esborrat.');
+        }
+    });
+
+    $('#mRefresh').addEventListener('click', loadMissatges);
+
+    // Avís de missatges nous al canviar de pestanya
+    async function comptaMissatgesNous() {
+        try {
+            const { count, error } = await client.from('missatges')
+                .select('id', { count: 'exact', head: true }).eq('llegit', false);
+            if (!error) actualitzaBadge(count || 0);
+        } catch { /* la taula encara no existeix */ }
+    }
+
     init();
+    comptaMissatgesNous();
 })();

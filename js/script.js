@@ -212,36 +212,61 @@
     const feedback = document.getElementById('formFeedback');
 
     if (form) {
-        form.addEventListener('submit', (e) => {
+        const mostra = (text, ok) => {
+            feedback.textContent = text;
+            feedback.style.color = ok ? '#1F7A3A' : '#C25B3F';
+        };
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const name = form.name.value.trim();
-            const phone = form.phone.value.trim();
-            const email = form.email.value.trim();
-            const message = form.message.value.trim();
-
             if (form.consentiment && !form.consentiment.checked) {
-                feedback.textContent = 'Has d\'acceptar la política de privacitat.';
-                feedback.style.color = '#C25B3F';
+                mostra('Has d\'acceptar la política de privacitat.', false);
                 return;
             }
 
-            if (!name || !phone || !email || !message) {
-                feedback.textContent = 'Si us plau, omple tots els camps.';
-                feedback.style.color = '#C25B3F';
+            const nom = form.name.value.trim();
+            const telefon = form.phone.value.trim();
+            const email = form.email.value.trim();
+            const missatge = form.message.value.trim();
+
+            if (!nom || !telefon || !email || !missatge) {
+                mostra('Si us plau, omple tots els camps.', false);
                 return;
             }
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                feedback.textContent = 'Si us plau, introdueix un correu electrònic vàlid.';
-                feedback.style.color = '#C25B3F';
+                mostra('Si us plau, introdueix un correu electrònic vàlid.', false);
                 return;
             }
 
-            feedback.textContent = 'Gràcies! Hem rebut el teu missatge i et contactarem aviat.';
-            feedback.style.color = '#1F7A3A';
-            form.reset();
+            const api = window.ProjectesAPI;
+            if (!api || !api.configured) {
+                mostra('Ara mateix no podem rebre el formulari. Truca\'ns o escriu-nos per WhatsApp.', false);
+                return;
+            }
+
+            const boto = form.querySelector('button[type="submit"]');
+            const etiqueta = boto.textContent;
+            boto.disabled = true;
+            boto.textContent = 'Enviant…';
+            mostra('', true);
+
+            try {
+                await api.enviarMissatge({
+                    nom, telefon, email, missatge,
+                    servei: form.servei ? (form.servei.value || null) : null
+                });
+                form.reset();
+                mostra('Gràcies! Hem rebut el teu missatge i et contactarem aviat.', true);
+            } catch (err) {
+                console.error(err);
+                mostra('No s\'ha pogut enviar. Torna-ho a provar o truca\'ns directament.', false);
+            } finally {
+                boto.disabled = false;
+                boto.textContent = etiqueta;
+            }
         });
     }
 })();

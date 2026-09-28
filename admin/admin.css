@@ -263,3 +263,21 @@ a { color: inherit; }
 }
 .field select:focus { outline: none; background: #fff; border-color: var(--terracota); box-shadow: 0 0 0 4px rgba(194, 91, 63, 0.12); }
 @media (max-width: 640px) { .row.simple { grid-template-columns: minmax(0, 1fr); } }
+
+.tab-badge {
+    display: inline-block; min-width: 20px; padding: 1px 6px; margin-left: 6px;
+    border-radius: 999px; background: var(--terracota); color: #fff;
+    font-size: 0.72rem; font-weight: 700; vertical-align: 1px;
+}
+.tab.is-active .tab-badge { background: #fff; color: var(--ink); }
+
+.msg { display: block; padding: 18px 20px; }
+.msg.no-llegit { border-left: 3px solid var(--terracota); }
+.msg-top { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+.msg-nom { font-weight: 700; font-size: 1rem; }
+.msg-data { color: var(--muted); font-size: 0.82rem; }
+.msg-contacte { display: flex; gap: 14px; flex-wrap: wrap; margin: 8px 0 12px; font-size: 0.88rem; }
+.msg-contacte a { color: var(--terracota); text-decoration: none; font-weight: 600; }
+.msg-contacte a:hover { text-decoration: underline; }
+.msg-text { color: var(--ink); font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; margin-bottom: 14px; }
+.msg-accions { display: flex; gap: 8px; flex-wrap: wrap; }

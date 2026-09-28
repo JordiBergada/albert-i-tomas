@@ -256,3 +256,41 @@ select * from (values
     ('pedra', 'Cal manteniment?', 'La pedra és molt duradora. Recomanem aplicar tractaments hidròfugs cada certs anys segons l''exposició.', 30)
 ) as v(pagina, pregunta, resposta, ordre)
 where not exists (select 1 from public.faqs);
+
+-- =====================================================================
+-- BLOC 4 · Missatges del formulari de contacte (afegit el 2026-09-28)
+-- Torna a executar aquest fitxer sencer: és segur i no esborra res.
+-- =====================================================================
+
+create table if not exists public.missatges (
+    id          uuid primary key default gen_random_uuid(),
+    created_at  timestamptz not null default now(),
+    nom         text not null check (char_length(nom) between 2 and 100),
+    telefon     text not null check (char_length(telefon) between 6 and 30),
+    email       text not null check (char_length(email) between 5 and 120),
+    servei      text check (char_length(servei) <= 40),
+    missatge    text not null check (char_length(missatge) between 5 and 2000),
+    llegit      boolean not null default false
+);
+
+create index if not exists missatges_llistat_idx on public.missatges (llegit, created_at desc);
+
+alter table public.missatges enable row level security;
+
+-- Qualsevol visitant pot enviar el formulari, però ningú pot llegir els missatges
+-- ni modificar-los si no és administrador.
+drop policy if exists "qualsevol pot enviar" on public.missatges;
+create policy "qualsevol pot enviar" on public.missatges
+    for insert to anon, authenticated with check (llegit = false);
+
+drop policy if exists "admins llegeixen missatges" on public.missatges;
+create policy "admins llegeixen missatges" on public.missatges
+    for select to authenticated using (public.is_admin());
+
+drop policy if exists "admins marquen missatges" on public.missatges;
+create policy "admins marquen missatges" on public.missatges
+    for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "admins esborren missatges" on public.missatges;
+create policy "admins esborren missatges" on public.missatges
+    for delete to authenticated using (public.is_admin());
