@@ -10,5 +10,5 @@ window.SITE_CONFIG = {
     // al primer enviament, FormSubmit escriu a aquesta adreça amb un botó
     // «Activate Form»; fins que no es clica, no entrega res.
     // Encara que falli, el missatge sempre queda desat al panell.
-    FORM_AVIS_ENDPOINT: 'https://formsubmit.co/ajax/construccionsalbertomas@gmail.com'
+    FORM_AVIS_ENDPOINT: 'https://formsubmit.co/ajax/jordibergada05@gmail.com'   // TEMPORAL: passar a construccionsalbertomas@gmail.com quan hi hagi domini propi
 };
