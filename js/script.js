@@ -220,6 +220,12 @@
             const email = form.email.value.trim();
             const message = form.message.value.trim();
 
+            if (form.consentiment && !form.consentiment.checked) {
+                feedback.textContent = 'Has d\'acceptar la política de privacitat.';
+                feedback.style.color = '#C25B3F';
+                return;
+            }
+
             if (!name || !phone || !email || !message) {
                 feedback.textContent = 'Si us plau, omple tots els camps.';
                 feedback.style.color = '#C25B3F';

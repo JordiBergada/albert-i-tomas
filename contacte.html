@@ -141,6 +141,10 @@
                         <label for="message">Explica'ns el teu projecte</label>
                         <textarea id="message" name="message" rows="5" required></textarea>
                     </div>
+                    <label class="form-consent">
+                        <input type="checkbox" name="consentiment" required>
+                        <span>He llegit i accepto la <a href="/politica-privacitat" target="_blank" rel="noopener">política de privacitat</a>.</span>
+                    </label>
                     <button type="submit" class="btn btn-primary btn-full">
                         Enviar missatge
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -187,7 +191,7 @@
         <div class="footer-bottom">
             <div class="container">
                 <p>&copy; <span id="year"></span> Construccions i Reformes Albert i Tomàs. Tots els drets reservats.</p>
-                <p><a href="#">Avís legal</a> · <a href="#">Política de privacitat</a></p>
+                <p><a href="/avis-legal">Avís legal</a> · <a href="/politica-privacitat">Política de privacitat</a> · <a href="/politica-cookies">Cookies</a></p>
             </div>
         </div>
     </footer>
