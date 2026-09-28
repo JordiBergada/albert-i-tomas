@@ -71,6 +71,8 @@
         <nav class="tabs" id="sectionTabs" aria-label="Seccions">
             <button type="button" class="tab is-active" data-section="projectes">Projectes</button>
             <button type="button" class="tab" data-section="destacats">A obra</button>
+            <button type="button" class="tab" data-section="testimonis">Testimonis</button>
+            <button type="button" class="tab" data-section="faqs">Preguntes freqüents</button>
         </nav>
 
         <!-- Llistat -->
@@ -274,6 +276,147 @@
                         <p class="form-error" id="dSaveError" role="alert" hidden></p>
                         <button type="submit" class="btn btn-primary btn-block" id="dSaveBtn">Desar</button>
                         <button type="button" class="btn btn-danger-ghost btn-block" id="dDeleteBtn" hidden>Esborrar</button>
+                    </div>
+                </aside>
+            </form>
+        </section>
+
+        <!-- Testimonis: llistat -->
+        <section class="panel" id="viewTestimonis" hidden>
+            <div class="panel-head">
+                <div>
+                    <h1>Testimonis</h1>
+                    <p class="panel-sub" id="tCount">Carregant…</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="tNewBtn">+ Nou testimoni</button>
+            </div>
+            <p class="panel-note">Ressenyes de clients. Surten a la pàgina d'inici i a les quatre pàgines de servei.</p>
+            <ul class="rows" id="tRows" aria-live="polite"></ul>
+            <div class="empty" id="tEmpty" hidden>
+                <h2>Cap testimoni</h2>
+                <p>Afegeix la primera ressenya d'un client.</p>
+                <button type="button" class="btn btn-primary" data-action="tnew">+ Afegir el primer</button>
+            </div>
+        </section>
+
+        <!-- Testimonis: editor -->
+        <section class="panel" id="viewTestimoniEditor" hidden>
+            <button type="button" class="back-link" id="tBackBtn">← Tornar</button>
+            <div class="panel-head"><h1 id="tEditorTitle">Nou testimoni</h1></div>
+            <form id="testimoniForm" class="editor" novalidate>
+                <div class="editor-main">
+                    <div class="card">
+                        <label class="field">
+                            <span>Ressenya <em>*</em></span>
+                            <textarea name="text" rows="4" maxlength="600" required placeholder="Què ha dit el client"></textarea>
+                            <small class="field-error" data-for="text"></small>
+                        </label>
+                        <div class="field-row">
+                            <label class="field">
+                                <span>Nom <em>*</em></span>
+                                <input type="text" name="autor" maxlength="80" required placeholder="Marta i Jordi">
+                                <small class="field-error" data-for="autor"></small>
+                            </label>
+                            <label class="field">
+                                <span>Estrelles</span>
+                                <select name="estrelles">
+                                    <option value="5">5 estrelles</option>
+                                    <option value="4">4 estrelles</option>
+                                    <option value="3">3 estrelles</option>
+                                    <option value="2">2 estrelles</option>
+                                    <option value="1">1 estrella</option>
+                                </select>
+                            </label>
+                        </div>
+                        <label class="field">
+                            <span>Detall</span>
+                            <input type="text" name="detall" maxlength="120" placeholder="Reforma de bany i cuina · Tàrrega">
+                            <small class="hint">Text petit sota el nom: tipus de feina i població.</small>
+                        </label>
+                    </div>
+                </div>
+                <aside class="editor-side">
+                    <div class="card sticky">
+                        <h2 class="card-title">Publicació</h2>
+                        <label class="switch">
+                            <input type="checkbox" name="publicat" checked>
+                            <span class="switch-track" aria-hidden="true"></span>
+                            <span class="switch-label">Visible a la web</span>
+                        </label>
+                        <p class="form-error" id="tSaveError" role="alert" hidden></p>
+                        <button type="submit" class="btn btn-primary btn-block" id="tSaveBtn">Desar</button>
+                        <button type="button" class="btn btn-danger-ghost btn-block" id="tDeleteBtn" hidden>Esborrar</button>
+                    </div>
+                </aside>
+            </form>
+        </section>
+
+        <!-- FAQs: llistat -->
+        <section class="panel" id="viewFaqs" hidden>
+            <div class="panel-head">
+                <div>
+                    <h1>Preguntes freqüents</h1>
+                    <p class="panel-sub" id="fCount">Carregant…</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="fNewBtn">+ Nova pregunta</button>
+            </div>
+            <div class="chips" id="fFilter">
+                <button type="button" class="chip is-active" data-pagina="">Totes</button>
+                <button type="button" class="chip" data-pagina="home">Pàgina d'inici</button>
+                <button type="button" class="chip" data-pagina="obra-nova">Obra nova</button>
+                <button type="button" class="chip" data-pagina="reformes">Reformes integrals</button>
+                <button type="button" class="chip" data-pagina="piscines">Piscines</button>
+                <button type="button" class="chip" data-pagina="pedra">Treballs amb pedra</button>
+            </div>
+            <ul class="rows" id="fRows" aria-live="polite"></ul>
+            <div class="empty" id="fEmpty" hidden>
+                <h2>Cap pregunta</h2>
+                <p>Afegeix la primera pregunta freqüent.</p>
+                <button type="button" class="btn btn-primary" data-action="fnew">+ Afegir la primera</button>
+            </div>
+        </section>
+
+        <!-- FAQs: editor -->
+        <section class="panel" id="viewFaqEditor" hidden>
+            <button type="button" class="back-link" id="fBackBtn">← Tornar</button>
+            <div class="panel-head"><h1 id="fEditorTitle">Nova pregunta</h1></div>
+            <form id="faqForm" class="editor" novalidate>
+                <div class="editor-main">
+                    <div class="card">
+                        <label class="field">
+                            <span>On es veu <em>*</em></span>
+                            <select name="pagina">
+                                <option value="home">Pàgina d'inici</option>
+                                <option value="obra-nova">Obra nova</option>
+                                <option value="reformes">Reformes integrals</option>
+                                <option value="piscines">Piscines</option>
+                                <option value="pedra">Treballs amb pedra</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Pregunta <em>*</em></span>
+                            <input type="text" name="pregunta" maxlength="200" required placeholder="Quina zona cobriu?">
+                            <small class="field-error" data-for="pregunta"></small>
+                        </label>
+                        <label class="field">
+                            <span>Resposta <em>*</em></span>
+                            <textarea name="resposta" rows="6" maxlength="1500" required></textarea>
+                            <small class="hint">Deixa una línia en blanc per començar un paràgraf nou.</small>
+                            <small class="field-error" data-for="resposta"></small>
+                        </label>
+                    </div>
+                </div>
+                <aside class="editor-side">
+                    <div class="card sticky">
+                        <h2 class="card-title">Publicació</h2>
+                        <label class="switch">
+                            <input type="checkbox" name="publicat" checked>
+                            <span class="switch-track" aria-hidden="true"></span>
+                            <span class="switch-label">Visible a la web</span>
+                        </label>
+                        <p class="form-error" id="fSaveError" role="alert" hidden></p>
+                        <button type="submit" class="btn btn-primary btn-block" id="fSaveBtn">Desar</button>
+                        <button type="button" class="btn btn-danger-ghost btn-block" id="fDeleteBtn" hidden>Esborrar</button>
                     </div>
                 </aside>
             </form>

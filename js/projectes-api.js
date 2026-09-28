@@ -98,9 +98,30 @@
         return data;
     }
 
+    async function llistarTestimonis({ nomesPublicats = true } = {}) {
+        let q = client.from('testimonis').select('*')
+            .order('ordre', { ascending: true })
+            .order('created_at', { ascending: true });
+        if (nomesPublicats) q = q.eq('publicat', true);
+        const { data, error } = await q;
+        if (error) throw error;
+        return data;
+    }
+
+    async function llistarFaqs({ pagina, nomesPublicats = true } = {}) {
+        let q = client.from('faqs').select('*')
+            .order('ordre', { ascending: true })
+            .order('created_at', { ascending: true });
+        if (pagina) q = q.eq('pagina', pagina);
+        if (nomesPublicats) q = q.eq('publicat', true);
+        const { data, error } = await q;
+        if (error) throw error;
+        return data;
+    }
+
     window.ProjectesAPI = {
         CATEGORIES, configured, client, BUCKET,
         imageUrl, escapeHtml, slugify, videoEmbedUrl,
-        llistarPublicats, obtenirPerSlug, llistarDestacats
+        llistarPublicats, obtenirPerSlug, llistarDestacats, llistarTestimonis, llistarFaqs
     };
 })();

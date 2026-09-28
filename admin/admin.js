@@ -26,12 +26,14 @@
 
     const panels = {
         list: '#viewList', editor: '#viewEditor',
-        destacats: '#viewDestacats', destacatEditor: '#viewDestacatEditor'
+        destacats: '#viewDestacats', destacatEditor: '#viewDestacatEditor',
+        testimonis: '#viewTestimonis', testimoniEditor: '#viewTestimoniEditor',
+        faqs: '#viewFaqs', faqEditor: '#viewFaqEditor'
     };
 
     function showPanel(panel) {
         Object.entries(panels).forEach(([k, sel]) => { $(sel).hidden = k !== panel; });
-        $('#sectionTabs').hidden = panel !== 'list' && panel !== 'destacats';
+        $('#sectionTabs').hidden = !['list', 'destacats', 'testimonis', 'faqs'].includes(panel);
         window.scrollTo({ top: 0 });
     }
 
@@ -666,7 +668,10 @@
         const tab = ev.target.closest('.tab');
         if (!tab) return;
         $('#sectionTabs').querySelectorAll('.tab').forEach(t => t.classList.toggle('is-active', t === tab));
-        if (tab.dataset.section === 'destacats') { showPanel('destacats'); loadDestacats(); }
+        const s = tab.dataset.section;
+        if (s === 'destacats') { showPanel('destacats'); loadDestacats(); }
+        else if (s === 'testimonis') { showPanel('testimonis'); loadTestimonis(); }
+        else if (s === 'faqs') { showPanel('faqs'); loadFaqs(); }
         else { showPanel('list'); loadList(); }
     });
 
@@ -919,6 +924,248 @@
     $('#dDeleteBtn').addEventListener('click', () => {
         const d = destacats.find(x => x.id === editorD.id) || { id: editorD.id, titol: dForm.titol.value };
         deleteDestacat(d);
+    });
+
+    // ================= Testimonis i preguntes freqüents =================
+    // Totes dues seccions funcionen igual: llistat + editor senzill.
+    function crearSeccio(cfg) {
+        let items = [];
+        let editant = null;
+        const form = $(cfg.form);
+
+        async function load() {
+            $(cfg.count).textContent = 'Carregant…';
+            try {
+                items = await cfg.llistar();
+                render();
+            } catch (err) {
+                console.error(err);
+                $(cfg.count).textContent = 'No s\'ha pogut carregar. Has executat el SQL del bloc 3?';
+            }
+        }
+
+        function render() {
+            const visibles = cfg.filtra ? items.filter(cfg.filtra) : items;
+            const publicats = items.filter(x => x.publicat).length;
+            $(cfg.count).textContent = items.length
+                ? `${items.length} ${items.length === 1 ? cfg.singular : cfg.plural} · ${publicats} ${publicats === 1 ? 'visible' : 'visibles'}`
+                : `Cap ${cfg.singular} encara`;
+            $(cfg.empty).hidden = items.length > 0;
+            const potOrdenar = !cfg.filtra || !cfg.filtreActiu();
+            $(cfg.rows).innerHTML = visibles.map(x => {
+                const i = items.indexOf(x);
+                return `
+                <li class="row simple${x.publicat ? '' : ' is-draft'}" data-id="${e(x.id)}">
+                    <div class="row-main">
+                        <button type="button" class="row-title" data-action="edit">${e(cfg.titol(x))}</button>
+                        <div class="row-meta">
+                            ${cfg.etiqueta(x).map(t => `<span class="pill">${e(t)}</span>`).join('')}
+                            ${x.publicat ? '' : '<span class="pill pill-draft">Amagat</span>'}
+                        </div>
+                        <p class="row-text">${e(cfg.resum(x))}</p>
+                    </div>
+                    <div class="row-order">
+                        <button type="button" class="icon-btn" data-action="up" aria-label="Pujar" ${potOrdenar && i > 0 ? '' : 'disabled'}>▲</button>
+                        <button type="button" class="icon-btn" data-action="down" aria-label="Baixar" ${potOrdenar && i < items.length - 1 ? '' : 'disabled'}>▼</button>
+                    </div>
+                    <div class="row-actions">
+                        <button type="button" class="icon-btn" data-action="edit" aria-label="Editar" title="Editar">✎</button>
+                        <button type="button" class="icon-btn danger" data-action="delete" aria-label="Esborrar" title="Esborrar">🗑</button>
+                    </div>
+                </li>`;
+            }).join('');
+        }
+
+        async function move(x, dir) {
+            const i = items.indexOf(x), j = i + dir;
+            if (j < 0 || j >= items.length) return;
+            [items[i], items[j]] = [items[j], items[i]];
+            const canvis = [];
+            items.forEach((y, k) => { if (y.ordre !== k * 10) { y.ordre = k * 10; canvis.push(y); } });
+            render();
+            const res = await Promise.all(canvis.map(y => client.from(cfg.taula).update({ ordre: y.ordre }).eq('id', y.id)));
+            if (res.some(r => r.error)) { toast('No s\'ha pogut desar l\'ordre.', true); load(); }
+        }
+
+        async function esborrar(x) {
+            if (!confirm(`Segur que vols esborrar «${cfg.titol(x)}»?`)) return;
+            const { error } = await client.from(cfg.taula).delete().eq('id', x.id);
+            if (error) { console.error(error); toast('No s\'ha pogut esborrar.', true); return; }
+            toast('Esborrat.');
+            dirty = false;
+            showPanel(cfg.panell);
+            load();
+        }
+
+        function obrir(x) {
+            form.reset();
+            form.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; });
+            form.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+            setError($(cfg.error), '');
+            editant = x ? x.id : null;
+            $(cfg.editorTitle).textContent = x ? cfg.titolEditar : cfg.titolNou;
+            $(cfg.deleteBtn).hidden = !x;
+            if (x) cfg.omplir(form, x);
+            else if (cfg.perDefecte) cfg.perDefecte(form);
+            dirty = false;
+            showPanel(cfg.panellEditor);
+            form.querySelector('input, textarea, select').focus();
+        }
+
+        $(cfg.rows).addEventListener('click', (ev) => {
+            const btn = ev.target.closest('[data-action]');
+            if (!btn) return;
+            const x = items.find(y => y.id === btn.closest('.row').dataset.id);
+            if (!x) return;
+            const a = btn.dataset.action;
+            if (a === 'edit') obrir(x);
+            if (a === 'up' || a === 'down') move(x, a === 'up' ? -1 : 1);
+            if (a === 'delete') esborrar(x);
+        });
+
+        $(cfg.newBtn).addEventListener('click', () => obrir(null));
+        $(cfg.emptyBtn).addEventListener('click', () => obrir(null));
+        $(cfg.backBtn).addEventListener('click', () => {
+            if (dirty && !confirm('Tens canvis sense desar. Vols tornar igualment?')) return;
+            dirty = false;
+            showPanel(cfg.panell);
+            load();
+        });
+        $(cfg.deleteBtn).addEventListener('click', () => {
+            const x = items.find(y => y.id === editant);
+            if (x) esborrar(x);
+        });
+
+        form.addEventListener('input', (ev) => {
+            dirty = true;
+            const camp = ev.target.closest('.field');
+            if (camp) {
+                camp.classList.remove('has-error');
+                const fe = form.querySelector(`.field-error[data-for="${ev.target.name}"]`);
+                if (fe) fe.textContent = '';
+            }
+        });
+
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            setError($(cfg.error), '');
+            const errors = [];
+            const marca = (nom, msg) => {
+                const fe = form.querySelector(`.field-error[data-for="${nom}"]`);
+                if (fe) fe.textContent = msg;
+                const inp = form.elements[nom];
+                const camp = inp && inp.closest ? inp.closest('.field') : null;
+                if (camp) camp.classList.add('has-error');
+                errors.push(nom);
+            };
+            const payload = cfg.recollir(form, marca);
+            if (errors.length) return;
+
+            const btn = $(cfg.saveBtn);
+            const etiqueta = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Desant…';
+            try {
+                let error;
+                if (editant) {
+                    ({ error } = await client.from(cfg.taula).update(payload).eq('id', editant));
+                } else {
+                    const maxOrdre = items.length ? Math.max(...items.map(x => x.ordre)) : 0;
+                    ({ error } = await client.from(cfg.taula).insert({ ordre: maxOrdre + 10, ...payload }));
+                }
+                if (error) throw error;
+                dirty = false;
+                toast(editant ? 'Canvis desats.' : 'Afegit.');
+                showPanel(cfg.panell);
+                load();
+            } catch (err) {
+                console.error(err);
+                setError($(cfg.error), 'No s\'ha pogut desar. Revisa la connexió i torna-ho a provar.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = etiqueta;
+            }
+        });
+
+        return { load, render, get items() { return items; } };
+    }
+
+    const PAGINES = {
+        home: 'Pàgina d\'inici', 'obra-nova': 'Obra nova', reformes: 'Reformes integrals',
+        piscines: 'Piscines', pedra: 'Treballs amb pedra'
+    };
+
+    const seccioTestimonis = crearSeccio({
+        taula: 'testimonis', singular: 'testimoni', plural: 'testimonis',
+        panell: 'testimonis', panellEditor: 'testimoniEditor',
+        form: '#testimoniForm', rows: '#tRows', count: '#tCount', empty: '#tEmpty',
+        emptyBtn: '#tEmpty [data-action="tnew"]', newBtn: '#tNewBtn', backBtn: '#tBackBtn',
+        saveBtn: '#tSaveBtn', deleteBtn: '#tDeleteBtn', error: '#tSaveError',
+        editorTitle: '#tEditorTitle', titolNou: 'Nou testimoni', titolEditar: 'Editar testimoni',
+        llistar: () => API.llistarTestimonis({ nomesPublicats: false }),
+        titol: x => x.autor,
+        etiqueta: x => ['★'.repeat(x.estrelles)],
+        resum: x => x.text,
+        omplir: (form, x) => {
+            form.text.value = x.text || '';
+            form.autor.value = x.autor || '';
+            form.detall.value = x.detall || '';
+            form.estrelles.value = String(x.estrelles || 5);
+            form.publicat.checked = x.publicat;
+        },
+        recollir: (form, marca) => {
+            const text = form.text.value.trim();
+            const autor = form.autor.value.trim();
+            if (text.length < 10) marca('text', 'Escriu la ressenya (mínim 10 caràcters).');
+            if (autor.length < 2) marca('autor', 'Escriu el nom del client.');
+            return {
+                text, autor,
+                detall: form.detall.value.trim() || null,
+                estrelles: Number(form.estrelles.value),
+                publicat: form.publicat.checked
+            };
+        }
+    });
+
+    let filtreFaq = '';
+    const seccioFaqs = crearSeccio({
+        taula: 'faqs', singular: 'pregunta', plural: 'preguntes',
+        panell: 'faqs', panellEditor: 'faqEditor',
+        form: '#faqForm', rows: '#fRows', count: '#fCount', empty: '#fEmpty',
+        emptyBtn: '#fEmpty [data-action="fnew"]', newBtn: '#fNewBtn', backBtn: '#fBackBtn',
+        saveBtn: '#fSaveBtn', deleteBtn: '#fDeleteBtn', error: '#fSaveError',
+        editorTitle: '#fEditorTitle', titolNou: 'Nova pregunta', titolEditar: 'Editar pregunta',
+        llistar: () => API.llistarFaqs({ nomesPublicats: false }),
+        filtra: x => !filtreFaq || x.pagina === filtreFaq,
+        filtreActiu: () => Boolean(filtreFaq),
+        titol: x => x.pregunta,
+        etiqueta: x => [PAGINES[x.pagina] || x.pagina],
+        resum: x => x.resposta,
+        perDefecte: (form) => { form.pagina.value = filtreFaq || 'home'; },
+        omplir: (form, x) => {
+            form.pagina.value = x.pagina;
+            form.pregunta.value = x.pregunta || '';
+            form.resposta.value = x.resposta || '';
+            form.publicat.checked = x.publicat;
+        },
+        recollir: (form, marca) => {
+            const pregunta = form.pregunta.value.trim();
+            const resposta = form.resposta.value.trim();
+            if (pregunta.length < 5) marca('pregunta', 'Escriu la pregunta.');
+            if (resposta.length < 5) marca('resposta', 'Escriu la resposta.');
+            return { pagina: form.pagina.value, pregunta, resposta, publicat: form.publicat.checked };
+        }
+    });
+
+    const loadTestimonis = () => seccioTestimonis.load();
+    const loadFaqs = () => seccioFaqs.load();
+
+    $('#fFilter').addEventListener('click', (ev) => {
+        const chip = ev.target.closest('.chip');
+        if (!chip) return;
+        filtreFaq = chip.dataset.pagina;
+        $('#fFilter').querySelectorAll('.chip').forEach(c => c.classList.toggle('is-active', c === chip));
+        seccioFaqs.render();
     });
 
     init();

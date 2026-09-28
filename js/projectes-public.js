@@ -270,6 +270,55 @@
         document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && !box.hidden) close(); });
     }
 
+
+    // ---------- Testimonis ----------
+    async function renderTestimonis() {
+        const grid = document.querySelector('[data-testimonis]');
+        if (!grid) return;
+        try {
+            const items = await API.llistarTestimonis();
+            if (!items.length) return;               // si no n'hi ha, deixem els de sempre
+            grid.innerHTML = items.map(t => `
+                <figure class="testimonial-card">
+                    <div class="stars" aria-label="${t.estrelles} estrelles">${'★'.repeat(t.estrelles)}</div>
+                    <blockquote>${e(t.text)}</blockquote>
+                    <figcaption>
+                        <strong>${e(t.autor)}</strong>
+                        ${t.detall ? `<span>${e(t.detall)}</span>` : ''}
+                    </figcaption>
+                </figure>`).join('');
+        } catch (err) {
+            console.error(err);                       // deixem el contingut estàtic
+        }
+    }
+
+    // ---------- Preguntes freqüents ----------
+    async function renderFaqs() {
+        const llista = document.querySelector('[data-faqs]');
+        if (!llista) return;
+        try {
+            const items = await API.llistarFaqs({ pagina: llista.dataset.faqs });
+            if (!items.length) return;
+            llista.innerHTML = items.map(f => `
+                <details class="faq-item">
+                    <summary>
+                        ${e(f.pregunta)}
+                        <span class="faq-toggle" aria-hidden="true"></span>
+                    </summary>
+                    <div class="faq-answer">
+                        ${f.resposta.split(/\n\s*\n/).map(t => `<p>${e(t.trim())}</p>`).join('')}
+                    </div>
+                </details>`).join('');
+            // un cop obert, tanca la resta
+            const faqs = llista.querySelectorAll('.faq-item');
+            faqs.forEach(item => item.addEventListener('toggle', () => {
+                if (item.open) faqs.forEach(o => { if (o !== item) o.removeAttribute('open'); });
+            }));
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     // ---------- Lightbox ----------
     function initLightbox(urls, titol) {
         if (!urls.length) return;
@@ -333,6 +382,8 @@
     renderHome();
     renderCarrusels();
     renderDestacats();
+    renderTestimonis();
+    renderFaqs();
     renderLlistat();
     renderFitxa();
 })();
