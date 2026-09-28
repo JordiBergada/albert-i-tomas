@@ -256,7 +256,8 @@
             try {
                 await api.enviarMissatge({
                     nom, telefon, email, missatge,
-                    servei: form.servei ? (form.servei.value || null) : null
+                    servei: form.servei ? (form.servei.value || null) : null,
+                    empresa: form.empresa ? form.empresa.value.trim() : ''
                 });
                 form.reset();
                 mostra('Gràcies! Hem rebut el teu missatge i et contactarem aviat.', true);

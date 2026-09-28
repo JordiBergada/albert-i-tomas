@@ -119,7 +119,29 @@
         return data;
     }
 
-    async function enviarMissatge(dades) {
+    async function enviarMissatge({ empresa, ...dades }) {
+        if (empresa) return;   // parany per a robots: no enviem res
+
+        // Via principal: l'Edge Function desa el missatge i avisa el client per correu.
+        try {
+            const res = await fetch(`${cfg.SUPABASE_URL}/functions/v1/enviar-missatge`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    apikey: cfg.SUPABASE_ANON_KEY,
+                    Authorization: `Bearer ${cfg.SUPABASE_ANON_KEY}`
+                },
+                body: JSON.stringify({ ...dades, empresa: '' })
+            });
+            if (res.ok) return;
+            if (res.status === 400) throw new Error('Dades del formulari no vàlides');
+            console.warn('Edge Function no disponible (' + res.status + '): desem el missatge directament.');
+        } catch (err) {
+            if (err && err.message === 'Dades del formulari no vàlides') throw err;
+            console.warn('No s\'ha pogut cridar l\'Edge Function: desem el missatge directament.', err);
+        }
+
+        // Pla B: si la funció encara no està desplegada, el missatge no es perd.
         const { error } = await client.from('missatges').insert(dades);
         if (error) throw error;
     }

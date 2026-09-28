@@ -2636,6 +2636,15 @@ a.project-item { color: inherit; }
     text-underline-offset: 3px;
 }
 
+/* Camp trampa per a robots: invisible per a les persones */
+.form-parany {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 /* ===========================
    Animacions reveal
    =========================== */
