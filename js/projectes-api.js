@@ -122,31 +122,42 @@
     async function enviarMissatge({ empresa, ...dades }) {
         if (empresa) return;   // parany per a robots: no enviem res
 
-        // 1. Desem la consulta: encara que el correu falli, no es perd res.
-        const { error } = await client.from('missatges').insert(dades);
-        if (error) throw error;
-
-        // 2. Avisem el client per correu.
-        if (!cfg.FORM_AVIS_ENDPOINT) return;
+        // Dues vies independents: n'hi ha prou que en funcioni una perquè la
+        // consulta arribi al client. Primer la desem, després l'avisem.
+        let errorDesant = null;
         try {
-            await fetch(cfg.FORM_AVIS_ENDPOINT, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({
-                    _subject: `Nova consulta del web · ${dades.nom}`,
-                    _replyto: dades.email,
-                    _template: 'table',
-                    _captcha: 'false',
-                    Nom: dades.nom,
-                    'Telèfon': dades.telefon,
-                    Correu: dades.email,
-                    Servei: CATEGORIES[dades.servei] || dades.servei || '—',
-                    Missatge: dades.missatge
-                })
-            });
+            const { error } = await client.from('missatges').insert(dades);
+            if (error) errorDesant = error;
         } catch (err) {
-            console.warn('No s\'ha pogut enviar l\'avís per correu:', err);
+            errorDesant = err;
         }
+        if (errorDesant) console.error('No s\'ha pogut desar el missatge:', errorDesant);
+
+        let correuEnviat = false;
+        if (cfg.FORM_AVIS_ENDPOINT) {
+            try {
+                const res = await fetch(cfg.FORM_AVIS_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        _subject: `Nova consulta del web · ${dades.nom}`,
+                        _replyto: dades.email,
+                        _template: 'table',
+                        _captcha: 'false',
+                        Nom: dades.nom,
+                        'Telèfon': dades.telefon,
+                        Correu: dades.email,
+                        Servei: CATEGORIES[dades.servei] || dades.servei || '—',
+                        Missatge: dades.missatge
+                    })
+                });
+                correuEnviat = res.ok;
+            } catch (err) {
+                console.warn('No s\'ha pogut enviar l\'avís per correu:', err);
+            }
+        }
+
+        if (errorDesant && !correuEnviat) throw errorDesant;
     }
 
     async function llistarMissatges() {
