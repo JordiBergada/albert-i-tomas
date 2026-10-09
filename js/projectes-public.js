@@ -119,8 +119,6 @@
 
             root.innerHTML = `
                 <section class="project-hero">
-                    <div class="hero-bg" style="background-image: url('${e(imageUrl(p.portada && p.portada.full))}');" aria-hidden="true"></div>
-                    <div class="hero-overlay" aria-hidden="true"></div>
                     <div class="container project-hero-content">
                         <nav class="breadcrumb" aria-label="Ruta">
                             <a href="/">Inici</a><span class="breadcrumb-sep">/</span>

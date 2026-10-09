@@ -2210,34 +2210,16 @@ a.project-item { color: inherit; }
 
 /* Fitxa de projecte */
 .project-hero {
-    position: relative;
-    min-height: 62vh;
-    display: flex;
-    align-items: flex-end;
-    padding: 180px 0 70px;
-    color: var(--white);
-    overflow: hidden;
-    background: var(--ink);
+    padding: 124px 0 56px;
+    background: var(--sand-lighter);
+    border-bottom: 1px solid var(--border-soft);
 }
 
-.project-hero-loading { background: var(--sand-lighter); }
+.project-hero-content { width: 100%; }
 
-.project-hero .hero-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    transform: scale(1.04);
-    animation: heroZoom 14s ease-out forwards;
-}
-
-.project-hero .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(43, 31, 24, 0.25) 0%, rgba(43, 31, 24, 0.82) 100%);
-}
-
-.project-hero-content { position: relative; z-index: 2; width: 100%; }
+.project-hero .breadcrumb { color: var(--muted); }
+.project-hero .breadcrumb a { color: var(--terracota); }
+.project-hero .breadcrumb a:hover { color: var(--terracota-dark); }
 
 .project-hero-tag {
     display: inline-block;
@@ -2245,19 +2227,19 @@ a.project-item { color: inherit; }
     letter-spacing: 0.18em;
     text-transform: uppercase;
     font-weight: 600;
-    color: var(--terracota-soft);
-    background: rgba(194, 91, 63, 0.3);
-    border: 1px solid rgba(243, 220, 208, 0.3);
+    color: var(--terracota-dark);
+    background: var(--terracota-soft);
+    border: 1px solid var(--border);
     padding: 7px 14px;
     border-radius: 999px;
     margin-bottom: 18px;
     transition: background var(--transition);
 }
 
-.project-hero-tag:hover { background: rgba(194, 91, 63, 0.55); }
+.project-hero-tag:hover { background: var(--sand); }
 
 .project-hero h1 {
-    color: var(--white);
+    color: var(--ink);
     font-size: clamp(2.2rem, 5vw, 4rem);
     line-height: 1.06;
     letter-spacing: -0.02em;
@@ -2441,7 +2423,7 @@ a.project-item { color: inherit; }
 }
 
 @media (max-width: 768px) {
-    .project-hero { min-height: auto; padding: 130px 0 50px; }
+    .project-hero { padding: 104px 0 42px; }
     .project-gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 130px; gap: 10px; }
     .pg-item, .pg-item-2, .pg-item-3, .pg-item-4, .pg-item-5, .pg-item-6 { grid-column: span 1; grid-row: span 1; }
     .pg-item-1 { grid-column: span 2; grid-row: span 2; }
