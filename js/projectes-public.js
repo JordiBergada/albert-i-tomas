@@ -107,7 +107,8 @@
             document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonical);
             document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
             if (p.resum) document.querySelector('meta[property="og:description"]')?.setAttribute('content', p.resum);
-            if (p.portada) document.querySelector('meta[property="og:image"]')?.setAttribute('content', imageUrl(p.portada));
+            const portada = imageUrl(p.portada && (p.portada.full || p.portada.thumb));
+            if (portada) document.querySelector('meta[property="og:image"]')?.setAttribute('content', portada);
 
             const imatges = [p.portada, ...(p.imatges || [])].filter(Boolean);
             const video = API.videoEmbedUrl(p.video_url);
