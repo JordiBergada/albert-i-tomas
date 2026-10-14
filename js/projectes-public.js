@@ -101,6 +101,14 @@
             const meta = document.querySelector('meta[name="description"]');
             if (meta && p.resum) meta.setAttribute('content', p.resum);
 
+            // Cada projecte té la seva URL: actualitzem canonical i Open Graph
+            const canonical = `${location.origin}${urlProjecte(p.slug)}`;
+            document.querySelector('link[rel="canonical"]')?.setAttribute('href', canonical);
+            document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonical);
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
+            if (p.resum) document.querySelector('meta[property="og:description"]')?.setAttribute('content', p.resum);
+            if (p.portada) document.querySelector('meta[property="og:image"]')?.setAttribute('content', imageUrl(p.portada));
+
             const imatges = [p.portada, ...(p.imatges || [])].filter(Boolean);
             const video = API.videoEmbedUrl(p.video_url);
             const paragrafs = (p.descripcio || '').split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
